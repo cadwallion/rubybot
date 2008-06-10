@@ -1,0 +1,17 @@
+@nickname = "[TecnoBot]" 
+@server_address = "irc.freenode.net"
+@server_port = "6667"
+@realname = "TecnoBot"
+@channels = []
+@channels = ['#wowhead']
+@nickserv_pass = 'password'
+@bindip = nil
+
+
+ADMINHOSTS = []
+ADMINHOSTS = ['user@host.com', 'otheruser@host.com']
+
+YOUTUBELINKS = false
+
+WEATHER_PAR = '11111'
+WEATHER_API = '11111'
