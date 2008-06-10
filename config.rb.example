@@ -8,7 +8,6 @@
 @bindip = nil
 
 
-ADMINHOSTS = []
 ADMINHOSTS = ['user@host.com', 'otheruser@host.com']
 
 YOUTUBELINKS = false
