@@ -10,7 +10,26 @@ class IRCHandler
       event.from
     end
   end
+  def self.need_args(cmd)
+    return "Sorry #{cmd} needs additional arguments.  Type '@help #{cmd}' to see the format of this command."
+  end
+  
   def self.message(event)
+    target = get_target(event)
+    from_nick = event.from
+    from_hostmask = event.hostmask
+    if event.message =~ /^@(.*) (.*)/i
+      command = $1
+      args = $2
+    end
+    new_process_message(from_nick, from_hostmask, target, command, args)
+    process_message(event)
+  end
+  
+  def self.new_process_message(from_nick, from_hostmask, target, command, args)
+    @@bot.send_notice(from_nick, "Command: #{command}; Args: #{args}")
+  end
+  def self.process_message(event)
     #Armory links
     if event.message =~ /^@armory$/i
       @@bot.send_notice(event.from, "The format for @armory is '@armory <us/eu> <realm name> <character name>'.")
@@ -225,4 +244,11 @@ class IRCHandler
       @@bot.send_message(self.get_target(event), "#{event.from.capitalize} rolled #{random_number.to_s} (0-#{limit}).")
     end
   end
+
+
+
+
+
 end
+
+
