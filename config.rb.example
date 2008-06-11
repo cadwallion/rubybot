@@ -1,16 +1,31 @@
+# IRC Nickname
 @nickname = "[TecnoBot]" 
-@server_address = "irc.freenode.net"
-@server_port = "6667"
+
+# IRC Realname
 @realname = "TecnoBot"
-@channels = []
-@channels = ['#wowhead']
-@nickserv_pass = 'password'
+
+# Server Address
+@server_address = "irc.freenode.net"
+
+# Server Port Number
+@server_port = "6667"
+
+# IP to bind to.  Use nil to auto-select the IP.
 @bindip = nil
 
+# Channels array
+@channels = []
+@channels = ['#wowhead']
 
+# Nickserv password
+@nickserv_pass = 'password'
+
+# Hostnames to allow to kill the bot
 ADMINHOSTS = ['user@host.com', 'otheruser@host.com']
 
+# Enable youtube checks - check the links and announces information about them (false = disabled, true = enabled)
 YOUTUBELINKS = false
 
+# Weather.com API information
 WEATHER_PAR = '11111'
 WEATHER_API = '11111'

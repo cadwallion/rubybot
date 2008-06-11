@@ -1,6 +1,5 @@
 require 'rubygems'
-gem 'Ruby-IRC'
-require 'IRC'
+require 'lib/Ruby-IRC/IRC.rb'
 require 'memcache'
 require 'open-uri'
 require 'rexml/document'
