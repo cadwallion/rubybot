@@ -10,31 +10,22 @@ class IRCHandler
       event.from
     end
   end
-  def self.need_args(cmd)
-    return "Sorry #{cmd} needs additional arguments.  Type '@help #{cmd}' to see the format of this command."
-  end
   
   def self.message(event)
     target = get_target(event)
     from_nick = event.from
     from_hostmask = event.hostmask
-    if event.message =~ /^@(.*) (.*)/i
-      command = $1
-      args = $2
+    if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
+      self.process_message(event)
     end
-    new_process_message(from_nick, from_hostmask, target, command, args)
-    process_message(event)
   end
-  
-  def self.new_process_message(from_nick, from_hostmask, target, command, args)
-    @@bot.send_notice(from_nick, "Command: #{command}; Args: #{args}")
-  end
+
   def self.process_message(event)
     #Armory links
-    if event.message =~ /^@armory$/i
+    if event.message =~ /^.armory$/i
       @@bot.send_notice(event.from, "The format for @armory is '@armory <us/eu> <realm name> <character name>'.")
     end
-    if event.message =~ /^@armory (.*)/i
+    if event.message =~ /^.armory (.*)/i
       value = $1.split
       if value[0].nil? or value[1].nil? or value[2].nil?
         @@bot.send_notice(event.from, "The format for @armory is '@armory <us/eu> <realm name> <character name>'.")
@@ -52,10 +43,10 @@ class IRCHandler
       end
     end
     #Armory Char Lookup
-    if event.message =~ /^@char$/i
+    if event.message =~ /^.char$/i
       @@bot.send_notice(event.from, "The format for @char is '@char <us/eu> <realm name> <character name>'.")
     end
-    if event.message =~ /^@char (.*)/i
+    if event.message =~ /^.char (.*)/i
       value = $1.split
       if value[0].nil? or value[1].nil? or value[2].nil?
         @@bot.send_notice(event.from, "The format for @char is '@char <us/eu> <realm name> <character name>'.")
@@ -75,10 +66,10 @@ class IRCHandler
       end
     end
     #Arena Points
-    if event.message =~ /^@ap$/i
+    if event.message =~ /^.ap$/i
       @@bot.send_notice(event.from, "The format for @ap is '@ap <5/3/2> <points>'.")
     end
-    if event.message =~ /^@ap (.*)/i
+    if event.message =~ /^.ap (.*)/i
       value = $1.split
       if value[0].nil? or value[1].nil?
         @@bot.send_notice(event.from, "The format for @ap is '@ap <5/3/2> <points>'.")
@@ -91,10 +82,10 @@ class IRCHandler
       end
     end
     #Armory Buff Lookup
-    if event.message =~ /^@buffinfo$/i
+    if event.message =~ /^.buffinfo$/i
       @@bot.send_notice(event.from, "The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'.")
     end
-    if event.message =~ /^@buffinfo (.*)/i
+    if event.message =~ /^.buffinfo (.*)/i
       value = $1.split
       if value[0].nil? or value[1].nil? or value[2].nil? or value[3].nil?
         @@bot.send_notice(event.from, "The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'.")
@@ -116,18 +107,18 @@ class IRCHandler
       end
     end
     #Check spec
-    if event.message =~ /^@spec$/i
+    if event.message =~ /^.spec$/i
       @@bot.send_notice(event.from, "The format for @spec is '@spec <tree1> <tree2> <tree3> <class>'.")
     end
-    if event.message =~ /^@help$/i
+    if event.message =~ /^.help$/i
       @@bot.send_message(self.get_target(event), "Type one of the following commands without any options to see available options.  Commands available: @char @armory @buffinfo @reload @weather @count @ap @roll")
     end
 
     #Weather Lookup
-    if event.message =~ /^@weather$/i
+    if event.message =~ /^.weather$/i
       @@bot.send_notice(event.from, "The format for @weather is '@weather <report/forecast/search/save/reset> <city information>'  City information is not required if you have already saved it.")
     end
-    if event.message =~ /^@weather (.*)/i
+    if event.message =~ /^.weather (.*)/i
       value = $1.split
       user = User.find_by_nickname(event.from)
       if value[0].nil?
@@ -190,7 +181,7 @@ class IRCHandler
 
 
     #Ping
-    if event.message =~ /^@ping$/i or event.message =~ /^@ping (.*)/i
+    if event.message =~ /^.ping$/i or event.message =~ /^.ping (.*)/i
       @@bot.send_message(self.get_target(event), "Pong!")
     end
 
@@ -207,7 +198,7 @@ class IRCHandler
 
 
     #Reload
-    if event.message =~ /^@reload$/i or event.message =~ /^@reload (.*)/i
+    if event.message =~ /^.reload$/i or event.message =~ /^.reload (.*)/i
       load 'database.rb'
       load 'armory.rb'
       load 'youtube.rb'
@@ -218,7 +209,7 @@ class IRCHandler
       @@bot.send_message(self.get_target(event), "Reloaded.")
     end
     #die
-    if event.message =~ /^@die$/i or event.message =~ /^@die (.*)/i
+    if event.message =~ /^.die$/i or event.message =~ /^.die (.*)/i
       ADMINHOSTS.each do |adminhost|
         if event.hostmask == adminhost
           @@bot.send_notice(event.from, "Disconnecting.")
@@ -228,16 +219,16 @@ class IRCHandler
       @@bot.send_notice(event.from, "You can't do that!")
     end
     #Announce
-    if event.message =~ /^@me$/i
+    if event.message =~ /^.me$/i
       @@bot.send_message(self.get_target(event), "I am #{@@bot.nick}")
     end
     #Rolling
-    if event.message =~ /^@roll$/i
+    if event.message =~ /^.roll$/i
       random_number = rand(100)
       @@bot.send_message(self.get_target(event), "#{event.from.capitalize} rolled #{random_number.to_s} (0-100).")
     end
     #More Rolling
-    if event.message =~ /^@roll ([0-9]*)/i
+    if event.message =~ /^.roll ([0-9]*)/i
       limit = $1.to_i
       limit = 100 if limit <= 0
       random_number = rand(limit)

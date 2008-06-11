@@ -1,4 +1,4 @@
-require "IRCUser"
+require "lib/Ruby-IRC/IRCUser.rb"
 
 # Represents an IRC Channel
 class IRCChannel

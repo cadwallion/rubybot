@@ -29,3 +29,6 @@ YOUTUBELINKS = false
 # Weather.com API information
 WEATHER_PAR = '11111'
 WEATHER_API = '11111'
+
+# Command character - The first character in a command, EG: ! ("!ping")
+COMMAND_CHAR = "@"

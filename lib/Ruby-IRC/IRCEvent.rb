@@ -10,7 +10,6 @@ class EventLookup
   end
 end
 
-
 # Handles an IRC generated event.
 # Handlers are for the IRC framework to use
 # Callbacks are for users to add.
@@ -25,8 +24,8 @@ class IRCEvent
     # mess_parts[0] is server info
     # mess_parts[1] is the message that was sent
     @message = mess_parts[1]
-    @stats = mess_parts[0].scan(/[\=-`\^\{\}\[\]\w.\#\@\+]+/)
-    
+    @stats = mess_parts[0].scan(/[\=\-\_\~\`\^\{\}\[\]\w.\#\@\+]+/)
+#    @stats = mess_parts[0].scan(/\w+/)
     if @stats[0].match(/^PING/)
       @event_type = 'ping'
     elsif @stats[1] && @stats[1].match(/^\d+/)
