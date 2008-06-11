@@ -86,24 +86,11 @@ class IRCHandler
           else
             domain = 'eu.wowarmory.com'
           end
-          buffname = value[3]
-          buffname = buffname + " " + value[4] unless value[4].nil?
-          buffname = buffname + " " + value[5] unless value[5].nil?
-          buffname = buffname + " " + value[6] unless value[6].nil?
-          buffname = buffname + " " + value[7] unless value[7].nil?
-          buffname = buffname + " " + value[8] unless value[8].nil?
-          buffname = buffname + " " + value[9] unless value[9].nil?
-          buffname = buffname + " " + value[10] unless value[10].nil?
-          buffname = buffname + " " + value[11] unless value[11].nil?
-          buffname = buffname + " " + value[12] unless value[12].nil?
-          buffname = buffname + " " + value[13] unless value[13].nil?
-          buffname = buffname + " " + value[14] unless value[14].nil?
-          buffname = buffname + " " + value[15] unless value[15].nil?
-          buffname = buffname + " " + value[16] unless value[16].nil?
-          buffname = buffname + " " + value[17] unless value[17].nil?
-          buffname = buffname + " " + value[18] unless value[18].nil?
+          buffname = ""
+          (3..18).each do |buffnum|
+            buffname = buffname + " " + value[buffnum] unless value[buffnum].nil?
+          end
           @@bot.send_message(self.get_target(event), Armory.get_buff_info(domain, value[1], value[2], buffname))
-
         else
           @@bot.send_notice(event.from, "Sorry, #{value[0]} is not a valid entry.  Must be 'eu' or 'us'. #{value[3]}")
         end
@@ -190,7 +177,7 @@ class IRCHandler
 
     #Youtube
     if YOUTUBELINKS == true
-      if event.message =~ /^http\:\/\/www\.youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i
+      if event.message =~ /^http\:\/\/(www\.)?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i
         value = $1
         unless value.nil?
           youtube = Youtube.get_movie(value)
