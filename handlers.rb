@@ -22,6 +22,13 @@ class IRCHandler
 
   def self.process_message(event)
     #Armory links
+    if event.message =~ /^.count$/i
+      url = "http://www.progenywow.com/zulamancount2.php"
+      file = Net::HTTP.get_response URI.parse(url)
+      count = file.body.gsub("\n", "")
+      @@bot.send_message(self.get_target(event), "Progeny has rickrolled #{count} people.")
+    end
+    #Armory links
     if event.message =~ /^.armory$/i
       @@bot.send_notice(event.from, "The format for @armory is '@armory <us/eu> <realm name> <character name>'.")
     end
