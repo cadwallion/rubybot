@@ -7,7 +7,8 @@ end
       current_cached = CACHE.get("current_"+citycode)
       if current_cached.nil?
         output = nil
-        uri = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&prod=xoap&par=#{WEATHER_PAR}&key=#{WEATHER_API}")
+        uri = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&prod=xoap&par=#{WEATHER_PAR}&key=#{WEATHER_API}")
+        uri
         uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
           weather = (REXML::Document.new xmldoc).root
           if weather.elements['/weather/cc'] then
@@ -35,7 +36,7 @@ end
       if forecast_cached.nil?
         output = nil
         forecast = nil
-        uri = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&dayf=5&prod=xoap&par=#{WEATHER_PAR}&key=#{WEATHER_API}")
+        uri = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&dayf=5&prod=xoap&par=#{WEATHER_PAR}&key=#{WEATHER_API}")
         uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
           weather = (REXML::Document.new xmldoc).root
           if weather.elements['/weather/dayf'] then
