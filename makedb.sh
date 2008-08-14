@@ -1,3 +1,3 @@
 #!/usr/local/bin/bash
 
-sqlite3 users.sqlite < users.sql
+sqlite3 bot.sqlite < users.sql
