@@ -1,7 +1,4 @@
 class Weather
-if !defined?(CACHE)
-  CACHE = MemCache.new 'localhost:11211', :namespace => 'weather'
-end
   def self.get_current(citycode)
     begin
       current_cached = CACHE.get("current_"+citycode)
