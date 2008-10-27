@@ -164,6 +164,36 @@ class IRCHandler
       @@bot.send_message(self.get_target(event), "Type one of the following commands without any options to see available options.  Commands available: @char @armory @buffinfo @reload @weather @count @ap @roll")
     end
 
+    #Wowhead Search
+    if event.message =~ /^.wowhead$/i
+      @@bot.send_notice(event.from, "The format for @wowhead is '@wowhead <wotlk/live> <search term>'.")
+    end
+    if event.message =~ /^.wowhead (.*)/i
+      value = $1.split
+      if value[0].nil? or value[1].nil?
+        @@bot.send_notice(event.from, "The format for @wowhead is '@wowhead <wotlk/live> <search term>'.")
+      else
+        if value[0] =~ /^wotlk$/i or value[0] =~ /^live$/i
+          if value[0] =~ /^wotlk$/i 
+            domain = 'wotlk.wowhead.com'
+          else
+            domain = 'www.wowhead.com'
+          end
+          value.delete_at(0)
+          term = value.join(" ")
+          items = Wowhead.search(domain, term).collect_every(5)
+#          items.each do |itemssmall|
+           itemssmall = items[0]
+            itemoutput = itemssmall.join(", ")
+            itemoutput = "Top 5: " + itemoutput
+            @@bot.send_message(self.get_target(event), itemoutput)
+#          end
+        else
+          @@bot.send_notice(event.from, "Sorry, #{value[0]} is not a valid entry.  Must be 'wotlk' or 'live'.")
+        end
+      end
+    end
+
     #Weather Lookup
     if event.message =~ /^.weather$/i
       @@bot.send_notice(event.from, "The format for @weather is '@weather <report/forecast/search/save/reset> <city information>'  City information is not required if you have already saved it.")
@@ -252,6 +282,7 @@ class IRCHandler
       load 'database.rb'
       load 'includes.rb'
       load 'armory.rb'
+      load 'wowhead.rb'
       load 'tvshows.rb'
       load 'youtube.rb'
       load 'handlers.rb'
