@@ -250,6 +250,7 @@ class IRCHandler
     #Reload
     if event.message =~ /^.reload$/i or event.message =~ /^.reload (.*)/i
       load 'database.rb'
+      load 'includes.rb'
       load 'armory.rb'
       load 'tvshows.rb'
       load 'youtube.rb'

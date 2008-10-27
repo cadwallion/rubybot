@@ -10,6 +10,7 @@ require 'tzinfo'
 
 load 'config.rb'
 load 'database.rb'
+load 'includes.rb'
 load 'tvshows.rb'
 load 'armory.rb'
 load 'youtube.rb'
