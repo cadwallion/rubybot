@@ -49,6 +49,10 @@ class IRCHandler
         end
       end
     end
+    #Check looping
+    if event.message =~ /^.loop$/i
+      @@bot.send_notice(event.from, @@loopmsg)
+    end
     #Armory Char Lookup
     if event.message =~ /^.char$/i
       @@bot.send_notice(event.from, "The format for @char is '@char <us/eu> <realm name> <character name>'.")
@@ -110,6 +114,45 @@ class IRCHandler
           @@bot.send_message(self.get_target(event), Armory.get_buff_info(domain, value[1], value[2], buffname))
         else
           @@bot.send_notice(event.from, "Sorry, #{value[0]} is not a valid entry.  Must be 'eu' or 'us'. #{value[3]}")
+        end
+      end
+    end
+    #TV Show Lookup
+  begin
+    if event.message =~ /^.tv$/i
+      @@bot.send_notice(event.from, "The format for @tv is '@tv <full tv show name>'.")
+    end
+    if event.message =~ /^.tv (.*)/i
+      showid = TVShow.search($1)
+      raise "Could not find show" unless showid
+      showinfo = TVShow.showinfo(showid)
+      raise "Could not find showinfo" unless showinfo
+      episodeinfo = TVShow.episodeinfo(showid)
+      raise "Could not find episodes" unless episodeinfo
+      @@bot.send_message(self.get_target(event), "#{showinfo['name']} airs on #{showinfo['airday']}s at #{showinfo['airtime'].strftime("%I:%M%p")} Pacific Time.  The next episode is on #{episodeinfo['airdate']} called '#{episodeinfo['title']}'")
+    end
+  rescue => err 
+    @@bot.send_message(self.get_target(event), "Error: #{err}")
+  end
+    #Rupture Settings
+    if event.message =~ /^.rupture$/i
+      @@bot.send_notice(event.from, "The format for @rupture is '@rupture save <id>'.")
+    end
+    if event.message =~ /^.rupture (.*)/i
+      value = $1.split
+      if value[0].nil? or value[1].nil?
+        @@bot.send_notice(event.from, "The format for @rupture is '@rupture save <id>'.")
+      else
+        if value[0] =~ /^save$/i
+          if user = User.find_by_nickname(event.from)
+            user.update_attributes('rupture' => value[1])
+            user.save
+          else
+            user = User.create('nickname' => event.from, 'hostname' => event.hostmask, 'rupture' => value[1])
+          end
+          @@bot.send_message(self.get_target(event), "Saved rupture XML id as '#{value[1]}'.")
+        else
+          @@bot.send_notice(event.from, "Sorry, #{value[0]} is not a valid entry.  Must be 'save'.")
         end
       end
     end
@@ -208,11 +251,13 @@ class IRCHandler
     if event.message =~ /^.reload$/i or event.message =~ /^.reload (.*)/i
       load 'database.rb'
       load 'armory.rb'
+      load 'tvshows.rb'
       load 'youtube.rb'
       load 'handlers.rb'
       load 'users.rb'
       load 'weather.rb'
       load 'config.rb'
+      load 'rupture.rb'
       @@bot.send_message(self.get_target(event), "Reloaded.")
     end
     #die
