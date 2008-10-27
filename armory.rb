@@ -45,7 +45,7 @@ class Armory
       uri = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}")
       uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
         armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? then
+        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
           character = {
             #General info, class, race, etc
             'characterclass' => armoryinfo.elements['/page/characterInfo/character'].attributes['class'],
@@ -153,7 +153,7 @@ class Armory
       uri = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}")
       uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
         armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? then
+        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
           armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
             if output.nil?
               output = "Buffs: "
@@ -177,7 +177,7 @@ class Armory
       uri = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}")
       uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
         armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? then
+        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
           armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
             if buffname == buff.attributes["name"]
               output = buff.attributes["name"] + ": " + buff.attributes["effect"]
