@@ -3,7 +3,14 @@
 end
 
 class IRCHandler
-  begin
+  def self.logger
+    if @logger.nil?
+      @logger = Logger.new("bot.log")
+      @logger.level = Logger::DEBUG
+    end
+    @logger
+  end
+
   def self.get_target(event)
     if event.channel =~ /#(.*)/
       event.channel
@@ -30,10 +37,10 @@ class IRCHandler
         end
       end
     end
-
   end
 
   def self.process_message(event)
+  begin
     #Armory links
     if event.message =~ /^.count$/i
       url = "http://www.progenywow.com/zulamancount2.php"
@@ -131,7 +138,6 @@ class IRCHandler
       end
     end
     #TV Show Lookup
-  begin
     if event.message =~ /^.tv$/i
       @@bot.send_notice(event.from, "The format for @tv is '@tv <full tv show name>'.")
     end
@@ -144,9 +150,7 @@ class IRCHandler
       raise "Could not find episodes" unless episodeinfo
       @@bot.send_message(self.get_target(event), "#{showinfo['name']} airs on #{showinfo['airday']}s at #{showinfo['airtime'].strftime("%I:%M%p")} Pacific Time.  The next episode is on #{episodeinfo['airdate']} called '#{episodeinfo['title']}'")
     end
-  rescue => err 
-    @@bot.send_message(self.get_target(event), "Error: #{err}")
-  end
+
     #Rupture Settings
     if event.message =~ /^.rupture$/i
       @@bot.send_notice(event.from, "The format for @rupture is '@rupture save <id>'.")
@@ -212,8 +216,11 @@ class IRCHandler
       @@bot.send_notice(event.from, "The format for @weather is '@weather <report/forecast/search/save/reset> <city information>'  City information is not required if you have already saved it.")
     end
     if event.message =~ /^.weather (.*)/i
+fsdfasdfasd
       value = $1.split
+      puts value.inspect
       user = User.find_by_nickname(event.from)
+      puts user.inspect
       if value[0].nil?
         @@bot.send_notice(event.from, "The format for @weather is '@weather <report/forecast/search/save/reset> <city information>' City information is not required if you have already saved it.")
       else
@@ -319,14 +326,13 @@ class IRCHandler
       random_number = rand(limit)
       @@bot.send_message(self.get_target(event), "#{event.from.capitalize} rolled #{random_number.to_s} (0-#{limit}).")
     end
-  end
-
-
 
     rescue => err
-      "Error: #{err.message}"
+      logger.debug "Error: #{err.message}"
     end
 
+
+  end
 end
 
 
