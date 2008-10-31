@@ -216,7 +216,6 @@ class IRCHandler
       @@bot.send_notice(event.from, "The format for @weather is '@weather <report/forecast/search/save/reset> <city information>'  City information is not required if you have already saved it.")
     end
     if event.message =~ /^.weather (.*)/i
-fsdfasdfasd
       value = $1.split
       puts value.inspect
       user = User.find_by_nickname(event.from)
