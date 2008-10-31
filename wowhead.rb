@@ -2,8 +2,8 @@ class Wowhead
   def self.search(domain, term)
     begin
       items = []
-      uri = URI.parse("http://#{domain}/?search=#{URI.encode(term)}&xml")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://#{domain}/?search=#{URI.encode(term)}&xml").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         searchinfo = (REXML::Document.new xmldoc).root
         if searchinfo.elements['/wowhead/items'] and searchinfo.elements['/wowhead/items'].attributes.any? then
           searchinfo.elements.each('/wowhead/items/item') do |item|
@@ -14,7 +14,6 @@ class Wowhead
         else
           ["No results found."]
         end
-      end
     rescue => err
       ["Error retrieving search results: #{err.message}"]
     end

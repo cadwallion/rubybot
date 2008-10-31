@@ -1,14 +1,13 @@
 class TVShow
   def self.search(term)
     begin
-      uri = URI.parse("http://www.tvrage.com/feeds/search.php?show=#{URI.encode(term)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
-        searchinfo = (REXML::Document.new xmldoc).root
-        if searchinfo.elements['/Results/show[1]/name'] and searchinfo.elements['/Results/show[1]/name'].text.downcase == term.downcase
-          return searchinfo.elements['/Results/show[1]/showid'].text
-        else
-          return false
-        end
+      url = URI.parse("http://www.tvrage.com/feeds/search.php?show=#{URI.encode(term)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
+      searchinfo = (REXML::Document.new xmldoc).root
+      if searchinfo.elements['/Results/show[1]/name'] and searchinfo.elements['/Results/show[1]/name'].text.downcase == term.downcase
+        return searchinfo.elements['/Results/show[1]/showid'].text
+      else
+        return false
       end
     rescue => err
       return false
@@ -16,8 +15,8 @@ class TVShow
   end
   def self.showinfo(showid)
     begin
-      uri = URI.parse("http://www.tvrage.com/feeds/showinfo.php?sid=#{URI.encode(showid)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://www.tvrage.com/feeds/showinfo.php?sid=#{URI.encode(showid)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         showinfo = (REXML::Document.new xmldoc).root
         if showinfo.elements['/Showinfo/showid']
           timezone = showinfo.elements['/Showinfo/timezone'].text
@@ -43,7 +42,6 @@ class TVShow
         else
           return false
         end
-      end
     rescue => err
       puts err
       return false
@@ -53,8 +51,8 @@ class TVShow
     episodes = {}
     returnepisode = {}
     begin
-      uri = URI.parse("http://www.tvrage.com/feeds/episode_list.php?sid=#{URI.encode(showid)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://www.tvrage.com/feeds/episode_list.php?sid=#{URI.encode(showid)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         episodeinfo = (REXML::Document.new xmldoc).root
         if episodeinfo.elements['/Show/Episodelist/Season/episode']
           episodeinfo.elements.each('/Show/Episodelist/Season/episode') do |episode|
@@ -81,7 +79,6 @@ class TVShow
         else
           return false
         end
-      end
     rescue => err
       puts err
       return false

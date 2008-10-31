@@ -3,6 +3,7 @@
 end
 
 class IRCHandler
+  begin
   def self.get_target(event)
     if event.channel =~ /#(.*)/
       event.channel
@@ -18,6 +19,18 @@ class IRCHandler
     if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
       self.process_message(event)
     end
+
+    #Youtube
+    if YOUTUBELINKS == true
+      if event.message =~ /^http\:\/\/www\.?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i
+        value = $1
+        unless value.nil?
+          youtube = Youtube.get_movie(value)
+          @@bot.send_message(self.get_target(event), youtube) if youtube != ""
+        end
+      end
+    end
+
   end
 
   def self.process_message(event)
@@ -265,18 +278,6 @@ class IRCHandler
       @@bot.send_message(self.get_target(event), "Pong!")
     end
 
-    #Youtube
-    if YOUTUBELINKS == true
-      if event.message =~ /^http\:\/\/(www\.)?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i
-        value = $1
-        unless value.nil?
-          youtube = Youtube.get_movie(value)
-          @@bot.send_message(self.get_target(event), youtube) if youtube != ""
-        end
-      end
-    end
-
-
     #Reload
     if event.message =~ /^.reload$/i or event.message =~ /^.reload (.*)/i
       load 'database.rb'
@@ -322,7 +323,9 @@ class IRCHandler
 
 
 
-
+    rescue => err
+      "Error: #{err.message}"
+    end
 
 end
 

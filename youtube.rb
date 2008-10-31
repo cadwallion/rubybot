@@ -1,8 +1,8 @@
 class Youtube
   def self.get_movie(movie)
     begin
-      uri = URI.parse("http://gdata.youtube.com/feeds/videos/#{URI.encode(movie)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://gdata.youtube.com/feeds/videos/#{URI.encode(movie)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         youtubeinfo = (REXML::Document.new xmldoc).root
         if youtubeinfo.elements['/entry'] and youtubeinfo.elements['/entry/title'] then
           youtube = {
@@ -17,7 +17,6 @@ class Youtube
         else
           ""
         end
-      end
     rescue => err
       "Error retrieving youtube info: #{err.message}"
     end

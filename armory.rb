@@ -42,8 +42,8 @@ class Armory
   end
   def self.get_stats(domain, realm, charactername)
     begin
-      uri = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
           character = {
@@ -142,7 +142,6 @@ class Armory
         else
           "Character #{charactername}, not found."
         end
-      end
     rescue => err
       "Error retrieving character profile: #{err.message}"
     end
@@ -150,8 +149,8 @@ class Armory
   def self.get_buffs(domain, realm, charactername)
     begin
       output = nil
-      uri = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
           armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
@@ -166,7 +165,6 @@ class Armory
         else
           ""
         end
-      end
     rescue => err
       "Error retrieving character buffs: #{err.message}"
     end
@@ -174,8 +172,8 @@ class Armory
   def self.get_buff_info(domain, realm, charactername, buffname)
     begin
       output = nil
-      uri = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}")
-      uri.open("User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.4) Gecko/20070515 Firefox/2.0.0.4") do |xmldoc|
+      url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
           armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
@@ -191,7 +189,6 @@ class Armory
         else
           "Character not found"
         end
-      end
     rescue => err
       "Error retrieving character buffs: #{err.message}"
     end

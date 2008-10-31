@@ -37,6 +37,7 @@ fi
   echo ""
   echo "Couldn't find bot '$botname' running, reloading..."
   echo ""
+  rm -f $pidfile
   $botscript
   exit 0
 
