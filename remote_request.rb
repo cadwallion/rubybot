@@ -46,7 +46,7 @@ private
       errors=""
       begin
         attempt_number=attempt_number+1
-        if (attempt_number > 100) then
+        if (attempt_number > 10) then
           return nil
         end
         
