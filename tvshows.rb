@@ -84,4 +84,13 @@ class TVShow
       return false
     end
   end
+  def self.display_info(args, event)
+    showid = TVShow.search(args)
+    return "Could not find show" unless showid
+    showinfo = TVShow.showinfo(showid)
+    return "Could not find showinfo" unless showinfo
+    episodeinfo = TVShow.episodeinfo(showid)
+    return "Could not find episodes" unless episodeinfo
+    return "#{showinfo['name']} airs on #{showinfo['airday']}s at #{showinfo['airtime'].strftime("%I:%M%p")} Pacific Time.  The next episode is on #{episodeinfo['airdate']} called '#{episodeinfo['title']}'"
+  end
 end

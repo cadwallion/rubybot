@@ -18,4 +18,17 @@ class Wowhead
       ["Error retrieving search results: #{err.message}"]
     end
   end
+
+  def self.display_results(args, event)
+    value = args.split(' ', 2)
+    if value[0] =~ /^wotlk$/i
+      domain = 'wotlk.wowhead.com'
+    else
+      domain = 'www.wowhead.com'
+    end
+    items = Wowhead.search(domain, value[1]).collect_every(5)
+    itemssmall = items[0]
+    itemoutput = itemssmall.join(", ")
+    return "Top 5: " + itemoutput
+  end
 end

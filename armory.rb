@@ -15,6 +15,40 @@ class Armory
       (points * 0.7).round.to_s
     end
   end
+  def self.char_info(args, event)
+    value = args.split  
+    if value[0] =~ /^us$/i
+      domain = 'www.wowarmory.com'
+    else
+      domain = 'eu.wowarmory.com'
+    end
+    buffs = Armory.get_buffs(domain, value[1], value[2])
+    return [Armory.get_stats(domain, value[1], value[2]), buffs] if buffs != ""
+    return Armory.get_stats(domain, value[1], value[2])
+  end
+  def self.show_points(args, event)
+    value = args.split
+    return "#{value[1]} rating = " + Armory.get_points(value[0], value[1])
+  end
+  def self.armory_link(args, event)
+    value = args.split  
+    if value[0] =~ /^us$/i
+      domain = 'www.wowarmory.com'
+    else
+      domain = 'eu.wowarmory.com'
+    end
+    buffs = Armory.get_buffs(domain, value[1], value[2])
+    return "#{value[2].capitalize}'s profile: http://#{domain}/character-sheet.xml?r=#{URI.encode(value[1].capitalize)}&n=#{URI.encode(value[2].capitalize)}"
+  end
+  def self.buffinfo(args, event)
+    value = args.split(' ', 4)
+    if value[0] =~ /^us$/i
+      domain = 'www.wowarmory.com'
+    else
+      domain = 'eu.wowarmory.com'
+    end
+    return Armory.get_buff_info(domain, value[1], value[2], value[3])
+  end
   def self.get_spec(treeone,treetwo,treethree,characterclass)
     total = treeone.to_i + treetwo.to_i + treethree.to_i
     avg = total / 3

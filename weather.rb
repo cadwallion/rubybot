@@ -90,5 +90,50 @@ class Weather
       "Error retrieving weather: #{err.message}"
     end
   end
+
+  def self.weather_reset(args, event)
+    if user = User.find_by_nickname(event.from)
+      if user.destroy
+        return "Reset location"
+      end
+    end
+    return false
+  end
+  def self.weather_search(args, event)
+    return Weather.search(args)
+  end
+  def self.weather_convert(args, event)
+    temp_c = convert_to_c(args.to_i)
+    return "#{args.to_s}F is #{temp_c.to_s}C"
+  end
+  def self.weather_report(args, event)
+    user = User.find_by_nickname(event.from)
+    if args == "" and user.nil?
+      "City code or zip code is required or city information must be saved."
+    elsif args != ""
+      return Weather.get_current(args)
+    else
+      return Weather.get_current(user.location)
+    end
+  end
+  def self.weather_forecast(args, event)
+    user = User.find_by_nickname(event.from)
+    if args == "" and user.nil?
+      "City code or zip code is required or city information must be saved."
+    elsif args != ""
+      return Weather.get_forecast(args)
+    else
+      return Weather.get_forecast(user.location)
+    end
+  end
+  def self.weather_save(args, event)
+    if user = User.find_by_nickname(event.from)
+      user.update_attributes('location' => args)
+      user.save
+    else
+      user = User.create('nickname' => event.from, 'hostname' => event.hostmask, 'location' => args)
+    end
+    return "Saved location"
+  end
 end
 

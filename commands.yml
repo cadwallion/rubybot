@@ -1,0 +1,73 @@
+armory:
+  help: "The format for @armory is '@armory <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu) (.*) (.*)$'
+  command: "Armory.armory_link"
+  num_args: 3
+char:  
+  help: "The format for @char is '@char <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu) (.*) (.*)$'
+  command: "Armory.char_info"
+  num_args: 3
+ap:
+  help: "The format for @ap is '@ap <5/3/2> <points>'."
+  regex: "^([235]) ([0-9]*)$"
+  num_args: 2
+  command: "Armory.show_points"
+buffinfo:
+  help: "The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'."
+  regex: '^(us|eu) (.*) (.*) (.*)$'
+  command: "Armory.buffinfo"
+  num_args: 3
+reload:
+  command: "self.reload_bot"
+weather:
+  out: "The format for @weather is '@weather <report/forecast/search/save/reset/convert> <city information>'  City information is not required if you have already saved it."
+  report:
+    command: "Weather.weather_report"
+    help: "The format for @weather report is '@weather report <city information>'  City information is not required if you have already saved it."
+  forecast:
+    command: "Weather.weather_forecast"
+    help: "The format for @weather forecast is '@weather forecast <city information>'  City information is not required if you have already saved it."
+  search:
+    command: "Weather.weather_search"
+    num_args: 1
+    help: "The format for @weather search is '@weather search <city information>'"
+  save:
+    command: "Weather.weather_save"
+    num_args: 1
+    help: "The format for @weather save is '@weather save <city information>'"
+  reset:
+    command: "Weather.weather_reset"
+    help: "The format for @weather reset is '@weather reset'"
+  convert:
+    command: "Weather.weather_convert"
+    help: "The format for @weather reset is '@weather covert <temperature in F>'"
+    num_args: 1
+tv:
+  help: "The format for @tv is '@tv <show name>'"
+  num_args: 1
+  command: "TVShow.display_info"
+rupture:
+  out: "The format for @rupture is '@rupture save <id>'"
+  save:
+    help: "The format for @rupture is '@rupture save <id>'"
+    num_args: 1
+    command: "Rupture.set_rupture"
+wowhead:
+  help: "The format for @wowhead is '@wowhead <wotlk/live> <search term>'."
+  num_args: 2
+  regex: '^(wotlk|live) (.*)$'
+  command: "Wowhead.display_results"
+ping:
+  out: "Pong!"
+die:
+  command: kill_bot
+count:
+  command: "self.rickroll_count"
+loop:
+  command: "self.check_loop"
+me:
+  command: "self.whoami"
+roll:
+  command: "self.do_roll"
+  help: "The format for @roll is '@roll [max roll]'"

@@ -33,4 +33,14 @@ class Rupture
   def self.send_message(target, nickname, event)
     @@bot.send_message(target, "Rupture - #{nickname}: #{event["title"]} - #{event["url"]}")
   end
+
+  def self.set_rupture(args, event)
+    if user = User.find_by_nickname(event.from)
+      user.update_attributes('rupture' => args)
+      user.save
+    else
+      user = User.create('nickname' => event.from, 'hostname' => event.hostmask, 'rupture' => args)
+    end
+    return "Saved rupture XML id as '#{args}'."
+  end
 end
