@@ -16,29 +16,32 @@ class Armory
     end
   end
   def self.char_info(args, event)
-    value = args.split  
-    if value[0] =~ /^us$/i
-      domain = 'www.wowarmory.com'
-    else
-      domain = 'eu.wowarmory.com'
+    if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
+      if $1 == "us"
+        domain = 'www.wowarmory.com'
+      else
+        domain = 'eu.wowarmory.com'
+      end
+      buffs = Armory.get_buffs(domain, $2, $3)
+      return [Armory.get_stats(domain, $2, $3), buffs] if buffs != ""
+      return Armory.get_stats(domain, $2, $3)
     end
-    buffs = Armory.get_buffs(domain, value[1], value[2])
-    return [Armory.get_stats(domain, value[1], value[2]), buffs] if buffs != ""
-    return Armory.get_stats(domain, value[1], value[2])
+    return false
   end
   def self.show_points(args, event)
     value = args.split
     return "#{value[1]} rating = " + Armory.get_points(value[0], value[1])
   end
   def self.armory_link(args, event)
-    value = args.split  
-    if value[0] =~ /^us$/i
-      domain = 'www.wowarmory.com'
-    else
-      domain = 'eu.wowarmory.com'
+    if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
+      if $1 == "us"
+        domain = 'www.wowarmory.com'
+      else
+        domain = 'eu.wowarmory.com'
+      end
+      return "#{$3.capitalize}'s profile: http://#{domain}/character-sheet.xml?r=#{URI.encode($2.capitalize)}&n=#{URI.encode($3.capitalize)}"
     end
-    buffs = Armory.get_buffs(domain, value[1], value[2])
-    return "#{value[2].capitalize}'s profile: http://#{domain}/character-sheet.xml?r=#{URI.encode(value[1].capitalize)}&n=#{URI.encode(value[2].capitalize)}"
+    return false
   end
   def self.buffinfo(args, event)
     value = args.split(' ', 4)
