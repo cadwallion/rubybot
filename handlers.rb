@@ -172,7 +172,7 @@ class IRCHandler
     end
     output = []
     @@commands.each do |command, value|
-      output = output << command.upcase
+      output = output << command
     end
     return "List of commands: "+ output.join(", ")
   end
