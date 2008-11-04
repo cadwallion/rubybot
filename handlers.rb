@@ -51,14 +51,14 @@ class IRCHandler
         message = self.do_command(command_array[0], command_array[1], event) unless command_array.nil? or command_array[0].nil? or command_array[1].nil?
         if message[0].class == Array
           message[0].each do |thismessage|
-            if message[1] == "notice"
+            if message[1] == "notice" or $1 =~ /^help/
               @@bot.send_notice(event.from, thismessage)
             else
               @@bot.send_message(self.get_target(event), thismessage)
             end
           end
         else
-          if message[1] == "notice"
+          if message[1] == "notice" or $1 =~ /^help/
             @@bot.send_notice(event.from, message[0])
           else
             @@bot.send_message(self.get_target(event), message[0])
@@ -165,6 +165,28 @@ class IRCHandler
       "#{event.from.capitalize} rolled #{random_number.to_s} (0-100)."
     end
   end
+
+  def self.do_help(args, event)
+    if args != ""
+      return get_help(@@commands, args)
+    end
+    output = []
+    @@commands.each do |command, value|
+      output = output << command.upcase
+    end
+    return "List of commands: "+ output.join(", ")
+  end
+  def self.get_help(command, args)
+    values = args.split(' ', 2)
+    unless command[values[0]].nil? or values[1].nil?
+      return self.get_help(command[values[0]], values[1])
+    end
+    unless command[values[0]]['help'].nil?
+      return command[values[0]]['help']
+    end
+    return "No help found"
+  end
+
 end
 
 

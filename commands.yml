@@ -1,26 +1,28 @@
 armory:
-  help: "The format for @armory is '@armory <us/eu> <realm name> <character name>'."
-  regex: '^(us|eu) (.*) (.*)$'
+  help: "Armory link generator. The format for @armory is '@armory <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu) (.*) ([a-zA-Z]*)$'
   command: "Armory.armory_link"
   num_args: 3
 char:  
-  help: "The format for @char is '@char <us/eu> <realm name> <character name>'."
-  regex: '^(us|eu) (.*) (.*)$'
+  help: "Armory Character Stats displayer. The format for @char is '@char <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu) (.*) ([a-zA-Z]*)$'
   command: "Armory.char_info"
   num_args: 3
 ap:
-  help: "The format for @ap is '@ap <5/3/2> <points>'."
+  help: "Arena point calculator. The format for @ap is '@ap <5/3/2> <points>'."
   regex: "^([235]) ([0-9]*)$"
   num_args: 2
   command: "Armory.show_points"
 buffinfo:
-  help: "The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'."
-  regex: '^(us|eu) (.*) (.*) (.*)$'
+  help: "Shows information about a buff on a character. The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'."
+  regex: '^(us|eu) (.*) ([a-zA-Z]*) (.*)$'
   command: "Armory.buffinfo"
   num_args: 3
 reload:
+  help: "Reloads the bot. The format for @reload is '@char'."
   command: "self.reload_bot"
 weather:
+  help: "Weather reporting. The format for @weather is '@weather <report/forecast/search/save/reset/convert> <city information>'  City information is not required if you have already saved it."
   out: "The format for @weather is '@weather <report/forecast/search/save/reset/convert> <city information>'  City information is not required if you have already saved it."
   report:
     command: "Weather.weather_report"
@@ -49,6 +51,7 @@ tv:
   command: "TVShow.display_info"
 rupture:
   out: "The format for @rupture is '@rupture save <id>'"
+  help: "The format for @rupture is '@rupture save <id>'"
   save:
     help: "The format for @rupture is '@rupture save <id>'"
     num_args: 1
@@ -59,15 +62,24 @@ wowhead:
   regex: '^(wotlk|live) (.*)$'
   command: "Wowhead.display_results"
 ping:
+  help: "The format for @ping is '@ping'."
   out: "Pong!"
 die:
+  help: "The format for @die is '@die'."
   command: kill_bot
 count:
+  help: "The format for @count is '@count'."
   command: "self.rickroll_count"
 loop:
+  help: "The format for @loop is '@loop'."
   command: "self.check_loop"
 me:
+  help: "Tells you who I am! The format for @me is '@me'."
   command: "self.whoami"
 roll:
   command: "self.do_roll"
   help: "The format for @roll is '@roll [max roll]'"
+help:
+  command: self.do_help
+  help: "You expect to get help on help? You sad person you."
+
