@@ -15,7 +15,7 @@ class Election
       results = JSON.parse(json.to_s)
       output = ["Country-wide Results"]
       results['P']['candidates'].each do |candidate|
-        output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
+        output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['cvotes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
       end
       output = output << ["Precincts Reporting: #{results['P']['pctsrep']}%"]
       return output.join(' | ')
@@ -32,7 +32,7 @@ class Election
       results = JSON.parse(json.to_s)
       output = ["State: #{results['state']}"]
       results['candidates'].each do |candidate|
-        output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
+        output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['cvotes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
       end
       output = output << ["Precincts Reporting: #{results['pctsrep']}%"]
       return output.join(' | ')
