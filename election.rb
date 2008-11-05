@@ -1,0 +1,41 @@
+class Election
+  def self.get_results(args, event)
+    return do_results
+  end
+
+  def self.get_state_results(args, event)
+    return do_state_results(args)
+  end
+
+  def self.do_results
+    begin
+      url = URI.parse("http://election.cnn.com/results/US/national.html?").to_s
+      doc = Hpricot(RemoteRequest.new("get").read(url))
+      json = (doc/"//*[@id='jsCode']").inner_html
+      results = JSON.parse(json.to_s)
+      output = []
+      results['P']['candidates'].each do |candidate|
+        output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
+      end
+      return output.join(' | ')
+    rescue => err
+      "Error retrieving search results: #{err.message}"
+    end
+  end
+
+  def self.do_state_results(state)
+    begin
+      url = URI.parse("http://election.cnn.com/results/#{state}/races/#{state}P00.html?").to_s
+      doc = Hpricot(RemoteRequest.new("get").read(url))
+      json = (doc/"//*[@id='jsCode']").inner_html
+      results = JSON.parse(json.to_s)
+      output = []
+      results['candidates'].each do |candidate|
+        output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
+      end
+      return output.join(' | ')
+    rescue => err
+      "Error retrieving search results: #{err.message}"
+    end
+  end
+end

@@ -9,6 +9,8 @@ require 'cgi'
 require 'tzinfo'
 require 'remote_request'
 require 'timekeeper'
+require 'hpricot'
+require 'json'
 
 load 'config.rb'
 load 'database.rb'
@@ -21,6 +23,7 @@ load 'weather.rb'
 load 'handlers.rb'
 load 'users.rb'
 load 'rupture.rb'
+load 'election.rb'
 
 @@loopmsg = ""
 

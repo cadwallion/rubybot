@@ -82,4 +82,8 @@ roll:
 help:
   command: self.do_help
   help: "You expect to get help on help? You sad person you."
-
+election:
+  command: Election.get_results
+state:
+  command: Election.get_state_results
+  num_args: 1

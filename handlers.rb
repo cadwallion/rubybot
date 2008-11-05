@@ -125,6 +125,7 @@ class IRCHandler
       load 'weather.rb'
       load 'config.rb'
       load 'rupture.rb'
+      load 'election.rb'
     return "Reloaded!"
   end
 
