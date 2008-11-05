@@ -106,7 +106,14 @@ class IRCHandler
           return ["An unknown error has occurred", "notice"]
         end
       end
-      return [eval(command['command'] + "(args, event)"), "message"]
+      unless command['command'].nil?
+        return [eval(command['command'] + "(args, event)"), "message"]
+      end
+      unless command['help'].nil?
+        return [command['help'], "notice"]
+      else
+        return ["An unknown error has occurred", "notice"]
+      end
     end
     rescue => err
       logger.debug "Error: #{err.message} at #{err.backtrace.first}"
