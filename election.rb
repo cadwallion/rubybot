@@ -17,6 +17,7 @@ class Election
       results['P']['candidates'].each do |candidate|
         output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
       end
+      output = output << ["Precincts Reporting: #{results['P']['pctsrep']}%"]
       return output.join(' | ')
     rescue => err
       "Error retrieving search results: #{err.message}"
@@ -33,6 +34,7 @@ class Election
       results['candidates'].each do |candidate|
         output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
       end
+      output = output << ["Precincts Reporting: #{results['pctsrep']}%"]
       return output.join(' | ')
     rescue => err
       "Error retrieving search results: #{err.message}"
