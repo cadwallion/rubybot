@@ -23,7 +23,6 @@ reload:
   command: "self.reload_bot"
 weather:
   help: "Weather reporting. The format for @weather is '@weather <report/forecast/search/save/reset/convert> <city information>'  City information is not required if you have already saved it."
-  out: "The format for @weather is '@weather <report/forecast/search/save/reset/convert> <city information>'  City information is not required if you have already saved it."
   report:
     command: "Weather.weather_report"
     help: "The format for @weather report is '@weather report <city information>'  City information is not required if you have already saved it."
@@ -50,7 +49,6 @@ tv:
   num_args: 1
   command: "TVShow.display_info"
 rupture:
-  out: "The format for @rupture is '@rupture save <id>'"
   help: "The format for @rupture is '@rupture save <id>'"
   save:
     help: "The format for @rupture is '@rupture save <id>'"
