@@ -13,7 +13,7 @@ class Election
       doc = Hpricot(RemoteRequest.new("get").read(url))
       json = (doc/"//*[@id='jsCode']").inner_html
       results = JSON.parse(json.to_s)
-      output = []
+      output = ["Country-wide Results"]
       results['P']['candidates'].each do |candidate|
         output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
       end
@@ -30,7 +30,7 @@ class Election
       doc = Hpricot(RemoteRequest.new("get").read(url))
       json = (doc/"//*[@id='jsCode']").inner_html
       results = JSON.parse(json.to_s)
-      output = []
+      output = ["State: #{results['state']}"]
       results['candidates'].each do |candidate|
         output = output << ["#{candidate['fname']} #{candidate['lname']}: #{candidate['votes']} Votes (#{candidate['vpct']}%) - #{candidate['evotes']} Electoral Votes"]
       end
