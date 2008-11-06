@@ -1,6 +1,8 @@
 require 'yaml'
+# load all bots commands, help, and correlation to its Object reference
 @@commands = YAML::load( File.open( 'commands.yml' ) )
 
+# initialization of event handler
 @message_proc = Proc.new do |event|
   IRCHandler.message(event)
 end
@@ -14,27 +16,38 @@ class IRCHandler
     @logger
   end
 
+  # determines if the command came from a PM or channel
   def self.get_target(event)
     if event.channel =~ /#(.*)/
+      # event was a channel message
       event.channel
     else
+      # event was a private message
       event.from
     end
   end
   
+  # initial response block from the event handler
   def self.message(event)
+    # finds the event target
     target = get_target(event)
+    # finds the event originator
     from_nick = event.from
+    # gets the hostmask
     from_hostmask = event.hostmask
+    # validates that event is a bot command.  check based on COMMAND_CHAR regex
     if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
+      # valid bot command, send to processor
       self.process_message(event)
     end
 
     #Youtube
     if YOUTUBELINKS == true
+      # is event a youtube link?
       if event.message =~ /^http\:\/\/www\.?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i
         value = $1
         unless value.nil?
+          # grab youtube information
           youtube = Youtube.get_movie(value)
           @@bot.send_message(self.get_target(event), youtube) if youtube != ""
         end
@@ -42,12 +55,17 @@ class IRCHandler
     end
   end
 
+  # routes the event to the correct Object defined in commands.yml
   def self.process_message(event)
     begin
       unless event.message.nil?
+        # set to global var for use in the Object associated with the command
         @@event = event
+        # check for valid bot command event.  Possibly a duplicate?
         if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
+          # slice up the information into two parts
           command_array = self.process_commands($1, @@commands)
+          # crunch data down to one message Array
           message = self.do_command(command_array[0], command_array[1], event) unless command_array.nil? or command_array[0].nil? or command_array[1].nil?
           if message[0].class == Array
             message[0].each do |thismessage|
