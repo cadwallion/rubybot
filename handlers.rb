@@ -8,14 +8,6 @@ require 'yaml'
 end
 
 class IRCHandler
-  def self.logger
-    if @logger.nil?
-      @logger = Logger.new("bot.log")
-      @logger.level = Logger::DEBUG
-    end
-    @logger
-  end
-
   # determines if the command came from a PM or channel
   def self.get_target(event)
     if event.channel =~ /#(.*)/
@@ -57,33 +49,36 @@ class IRCHandler
 
   # routes the event to the correct Object defined in commands.yml
   def self.process_message(event)
-    omgthiserrors
-    unless event.message.nil?
-      # set to global var for use in the Object associated with the command
-      @@event = event
-      # check for valid bot command event.  Possibly a duplicate?
-      if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
-        # slice up the information into two parts
-        command_array = self.process_commands($1, @@commands)
-        # crunch data down to one message Array
-        message = self.do_command(command_array[0], command_array[1], event) unless command_array.nil? or command_array[0].nil? or command_array[1].nil?
-        if message[0].class == Array
-          message[0].each do |thismessage|
-            if message[1] == "notice" or $1 =~ /^help/
-              @@bot.send_notice(event.from, thismessage)
-            else
-              @@bot.send_message(self.get_target(event), thismessage)
+    begin
+      unless event.message.nil?
+        # set to global var for use in the Object associated with the command
+        @@event = event
+        # check for valid bot command event.  Possibly a duplicate?
+        if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
+          # slice up the information into two parts
+          command_array = self.process_commands($1, @@commands)
+          # crunch data down to one message Array
+          message = self.do_command(command_array[0], command_array[1], event) unless command_array.nil? or command_array[0].nil? or command_array[1].nil?
+          if message[0].class == Array
+            message[0].each do |thismessage|
+              if message[1] == "notice" or $1 =~ /^help/
+                @@bot.send_notice(event.from, thismessage)
+              else
+                @@bot.send_message(self.get_target(event), thismessage)
+              end
             end
-          end
-        else
-          if message[1] == "notice" or $1 =~ /^help/
-            @@bot.send_notice(event.from, message[0])
           else
-            @@bot.send_message(self.get_target(event), message[0])
+            if message[1] == "notice" or $1 =~ /^help/
+              @@bot.send_notice(event.from, message[0])
+            else
+              @@bot.send_message(self.get_target(event), message[0])
+            end
           end
         end
       end
-    end
+    rescue => err
+      logger.debug "Error: #{err.message} at #{err.backtrace.first}"
+    end  
   end
 
   def self.process_commands(command, commands)
@@ -101,7 +96,7 @@ class IRCHandler
       return false
     end
     rescue => err
-      logger.debug "Error: #{err.message} at #{err.backtrace.first}"
+      log_error "Error: #{err.message} at #{err.backtrace.first}"
     end  
   end
 
@@ -128,7 +123,7 @@ class IRCHandler
       end
       return ["An unknown error has occurred", "notice"]
     rescue => err
-      logger.debug "Error: #{err.message} at #{err.backtrace.first}"
+      log_error "Error: #{err.message} at #{err.backtrace.first}"
     end  
   end
 

@@ -8,7 +8,6 @@ require 'active_record'
 require 'cgi'
 require 'tzinfo'
 require 'remote_request'
-require 'timekeeper'
 require 'hpricot'
 require 'json'
 
