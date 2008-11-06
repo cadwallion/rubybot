@@ -24,6 +24,7 @@ load 'handlers.rb'
 load 'users.rb'
 load 'rupture.rb'
 load 'election.rb'
+load 'shoutcast.rb'
 
 def logger
   if @logger.nil?
