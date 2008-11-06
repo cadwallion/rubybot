@@ -91,6 +91,6 @@ stream:
   regex: '^[0-9\.]* [0-9]*$'
   command: "Shoutcast.connect"
 join:
-  help: "Joins another channel.  The format for @join is '@join <#channel_name>'.  The # sign is required.
+  help: "Joins another channel.  The format for @join is '@join <#channel_name>'.  The # sign is required."
   regex: '^\#(.*)$'
   command: "self.join_channel"
