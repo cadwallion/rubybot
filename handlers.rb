@@ -148,6 +148,7 @@ class IRCHandler
       load 'config.rb'
       load 'rupture.rb'
       load 'election.rb'
+      load 'shoutcast.rb'
     return "Reloaded!"
   end
 
