@@ -1,50 +1,63 @@
+#gems
 require 'rubygems'
-require 'lib/Ruby-IRC/IRC.rb'
 require 'memcache'
 require 'open-uri'
 require 'rexml/document'
 require 'pp'
+require 'yaml'
 require 'active_record'
 require 'cgi'
 require 'tzinfo'
 require 'remote_request'
 require 'hpricot'
 require 'json'
-require 'logging.rb'
 
+#custom libraries
+require 'logging.rb'
+require 'lib/Ruby-IRC/IRC.rb'
+require 'database.rb'
+require 'includes.rb'
+
+#config
 load 'config.rb'
-load 'database.rb'
-load 'includes.rb'
+
+#modules
 load 'wowhead.rb'
 load 'tvshows.rb'
 load 'armory.rb'
 load 'youtube.rb'
 load 'weather.rb'
-load 'handlers.rb'
 load 'users.rb'
 load 'rupture.rb'
 load 'election.rb'
 load 'shoutcast.rb'
 
+#message handler, load last
+load 'handlers.rb'
+
 @@loopmsg = ""
 
+#fork to the background
 pid = fork do
   begin
     log_message("Starting bot")
     Signal.trap('HUP', 'IGNORE') # Don't die upon logout
 
+    #open and write pid number to file
     pidfile = File.new("bot.pid", "w")
     pidfile.write($$)
     pidfile.close
 
+    #allow bot to bind to a specific IP -- optional
     if @bindip.nil?
       @@bot = IRC.new(@nickname, @server_address, @server_port, @realname)
     else
       @@bot = IRC.new(@nickname, @server_address, @server_port, @realname, @bindip)
     end
 
+    #after receiving the endofmotd message, start login events
     IRCEvent.add_callback('endofmotd') do |event|
-      @@bot.send_message("Nickserv", "identify #{@nickserv_pass}")
+      @@bot.send_message("Nickserv", "identify #{@nickserv_pass}") unless @nickserv_pass.nil?
       @channels.each do |channel|
         @@bot.add_channel(channel)
       end

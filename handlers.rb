@@ -1,4 +1,3 @@
-require 'yaml'
 # load all bots commands, help, and correlation to its Object reference
 @@commands = YAML::load( File.open( 'commands.yml' ) )
 
@@ -97,42 +96,40 @@ class IRCHandler
   end
 
   def self.do_command(command, args, event)
-      return false if command.nil?
-      unless command['out'].nil?
-        return [command['out'], "message"]
-      end
-      unless command['command'].nil?
-        num_args = command['num_args'].nil? ? 0 : command['num_args'].to_i
-        opts = args.split(' ')
-        if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'])))
-          unless command['help'].nil?
-            return [command['help'], "notice"]
-          else
-            return ["An unknown error has occurred", "notice"]
-          end
+    return false if command.nil?
+    unless command['out'].nil?
+      return [command['out'], "message"]
+    end
+    unless command['command'].nil?
+      num_args = command['num_args'].nil? ? 0 : command['num_args'].to_i
+      opts = args.split(' ')
+      if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'])))
+        unless command['help'].nil?
+          return [command['help'], "notice"]
+        else
+          return ["An unknown error has occurred", "notice"]
         end
-        return [eval(command['command'] + "(args, event)"), "message"]
       end
-      unless command['help'].nil?
-        return [command['help'], "notice"]
-      end
-      return ["An unknown error has occurred", "notice"]
+      return [eval(command['command'] + "(args, event)"), "message"]
+    end
+    unless command['help'].nil?
+      return [command['help'], "notice"]
+    end
+    return ["An unknown error has occurred", "notice"]
   end
 
   def self.reload_bot(args, event)
-      load 'database.rb'
-      load 'includes.rb'
-      load 'armory.rb'
-      load 'wowhead.rb'
-      load 'tvshows.rb'
-      load 'youtube.rb'
-      load 'handlers.rb'
-      load 'users.rb'
-      load 'weather.rb'
-      load 'config.rb'
-      load 'rupture.rb'
-      load 'election.rb'
-      load 'shoutcast.rb'
+    load 'armory.rb'
+    load 'wowhead.rb'
+    load 'tvshows.rb'
+    load 'youtube.rb'
+    load 'users.rb'
+    load 'weather.rb'
+    load 'config.rb'
+    load 'rupture.rb'
+    load 'election.rb'
+    load 'shoutcast.rb'
+    load 'handlers.rb'
     return "Reloaded!"
   end
 
@@ -158,6 +155,17 @@ class IRCHandler
     return false
   end
 
+  def self.join_channel(args, event)
+    args = args.split
+    ADMINHOSTS.each do |adminhost|
+      if event.hostmask == adminhost
+        @@bot.add_channel(args[0])
+        return "Joined #{args[0]}"
+      end
+    end
+    return "You can't do that"
+  end
+  
   def self.whoami(args, event)
     return "I am #{@@bot.nick}"
   end
@@ -184,6 +192,7 @@ class IRCHandler
     end
     return "List of commands: "+ output.join(", ")
   end
+
   def self.get_help(command, args)
     values = args.split(' ', 2)
     unless command[values[0]].nil? or values[1].nil?
@@ -194,7 +203,4 @@ class IRCHandler
     end
     return "No help found"
   end
-
 end
-
-

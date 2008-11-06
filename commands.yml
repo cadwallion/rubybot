@@ -78,16 +78,19 @@ roll:
   command: "self.do_roll"
   help: "The format for @roll is '@roll [max roll]'"
 help:
-  command: self.do_help
+  command: "self.do_help"
   help: "You expect to get help on help? You sad person you."
 election:
-  command: Election.get_results
+  command: "Election.get_results"
 state:
-  command: Election.get_state_results
+  command: "Election.get_state_results"
   num_args: 1
 stream:
   help: "Gathers Shoutcast Stream Information.  The format for @stream is '@stream <address> <port>'."
   num_args: 2
-  regex: '^(.*) (.*)$'
-  command: Shoutcast.connect
-  
+  regex: '^[0-9\.]* [0-9]*$'
+  command: "Shoutcast.connect"
+join:
+  help: "Joins another channel.  The format for @join is '@join <#channel_name>'.  The # sign is required.
+  regex: '^\#(.*)$'
+  command: "self.join_channel"
