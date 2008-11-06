@@ -166,6 +166,20 @@ class IRCHandler
     return "You can't do that"
   end
   
+  def self.part_channel(args, event)
+    if event.channel =~ /^\#(.*)$/
+      ADMINHOSTS.each do |adminhost|
+        if event.hostmask == adminhost
+          @@bot.del_channel(event.channel)
+          return "Left #{event.channel}"
+        end
+      end
+    else
+      return "You need to do that from inside a channel."
+    end
+    return "You can't do that"
+  end
+  
   def self.whoami(args, event)
     return "I am #{@@bot.nick}"
   end

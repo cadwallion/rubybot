@@ -43,6 +43,11 @@ class IRC
     join(channel)
     self
   end
+
+  def del_channel channel
+    part(channel)
+    self
+  end
   
   # Returns a list of channels joined
   def channels
