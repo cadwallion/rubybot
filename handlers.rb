@@ -4,7 +4,11 @@ require 'yaml'
 
 # initialization of event handler
 @message_proc = Proc.new do |event|
-  IRCHandler.message(event)
+  begin
+    IRCHandler.message(event)
+  rescue => err
+    log_error(err)
+  end
 end
 
 class IRCHandler
@@ -49,7 +53,6 @@ class IRCHandler
 
   # routes the event to the correct Object defined in commands.yml
   def self.process_message(event)
-    begin
       unless event.message.nil?
         # set to global var for use in the Object associated with the command
         @@event = event
@@ -76,13 +79,9 @@ class IRCHandler
           end
         end
       end
-    rescue => err
-      log_error "Error: #{err.message} at #{err.backtrace.first}"
-    end  
   end
 
   def self.process_commands(command, commands)
-    begin
     this_command = command.split(' ', 2)
     unless commands[this_command[0]].nil?
       command_options = commands[this_command[0]]
@@ -95,13 +94,9 @@ class IRCHandler
     else
       return false
     end
-    rescue => err
-      log_error "Error: #{err.message} at #{err.backtrace.first}"
-    end  
   end
 
   def self.do_command(command, args, event)
-    begin
       return false if command.nil?
       unless command['out'].nil?
         return [command['out'], "message"]
@@ -122,9 +117,6 @@ class IRCHandler
         return [command['help'], "notice"]
       end
       return ["An unknown error has occurred", "notice"]
-    rescue => err
-      log_error "Error: #{err.message} at #{err.backtrace.first}"
-    end  
   end
 
   def self.reload_bot(args, event)

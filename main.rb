@@ -10,6 +10,7 @@ require 'tzinfo'
 require 'remote_request'
 require 'hpricot'
 require 'json'
+require 'logging.rb'
 
 load 'config.rb'
 load 'database.rb'
@@ -25,20 +26,11 @@ load 'rupture.rb'
 load 'election.rb'
 load 'shoutcast.rb'
 
-def logger
-  if @logger.nil?
-    @logger = Logger.new("bot.log")
-    @logger.level = Logger::DEBUG
-  end
-  @logger
-end
-
-
 @@loopmsg = ""
 
 pid = fork do
   begin
-    logger.info("Starting bot")
+    log_message("Starting bot")
     Signal.trap('HUP', 'IGNORE') # Don't die upon logout
 
     pidfile = File.new("bot.pid", "w")
@@ -80,7 +72,7 @@ pid = fork do
     IRCEvent.add_handler('privmsg', @message_proc)
     @@bot.connect
   rescue => err
-    logger.debug(err.message)
+    log_error(err)
   end
 end
 
