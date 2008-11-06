@@ -137,6 +137,7 @@ class IRCHandler
     ADMINHOSTS.each do |adminhost|
       if event.hostmask == adminhost
         @@bot.send_quit
+        exit
         return ""
       end
     end
