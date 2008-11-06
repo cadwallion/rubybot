@@ -91,6 +91,6 @@ class TVShow
     return "Could not find showinfo" unless showinfo
     episodeinfo = TVShow.episodeinfo(showid)
     return "Could not find episodes" unless episodeinfo
-    return "#{showinfo['name']} airs on #{showinfo['airday']}s at #{showinfo['airtime'].strftime("%I:%M%p")} Pacific Time.  The next episode is on #{episodeinfo['airdate']} called '#{episodeinfo['title']}'"
+    return "#{showinfo['name']} airs on #{showinfo['airday']}s at #{showinfo['airtime'].strftime("%I:%M%p")} Pacific Time on network '#{showinfo['network']}.'  The next episode is on #{episodeinfo['airdate']} called '#{episodeinfo['title']}'"
   end
 end
