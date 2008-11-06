@@ -77,7 +77,7 @@ class IRCHandler
         end
       end
     rescue => err
-      logger.debug "Error: #{err.message} at #{err.backtrace.first}"
+      log_error "Error: #{err.message} at #{err.backtrace.first}"
     end  
   end
 
