@@ -85,3 +85,9 @@ election:
 state:
   command: Election.get_state_results
   num_args: 1
+stream:
+  help: "Gathers Shoutcast Stream Information.  The format for @stream is '@stream <address> <port>'."
+  num_args: 2
+  regex: '^(.*) (.*)$'
+  command: Shoutcast.connect
+  
