@@ -25,7 +25,8 @@ class Weather
     rescue URI::InvalidURIError
       "Could not parse URL"
     rescue => err
-      "Error retrieving weather: #{err.message}"
+      log_error(err)
+      "Error retrieving weather."
     end
   end
   def self.get_forecast(citycode)
@@ -62,7 +63,8 @@ class Weather
     rescue URI::InvalidURIError
       "Could not parse URL"
     rescue => err
-      "Error retrieving weather: #{err.message}"
+      log_error(err)
+      "Error retrieving weather."
     end
   end
   def self.search(citycode)
@@ -87,7 +89,8 @@ class Weather
     rescue URI::InvalidURIError
       "Could not parse URL"
     rescue => err
-      "Error retrieving weather: #{err.message}"
+      log_error(err)
+      "Error retrieving weather"
     end
   end
 
