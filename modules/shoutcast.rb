@@ -1,6 +1,3 @@
-require 'socket'
-include Socket::Constants
-
 class Shoutcast
   def self.connect(args, event)
     # this line feels deprecated...test for it later
@@ -8,11 +5,8 @@ class Shoutcast
       addr = $1
       port = $2
       begin
-        socket = Socket.new(AF_INET, SOCK_STREAM, 0)
-        sockaddr = Socket.pack_sockaddr_in( port, addr )
-        socket.connect( sockaddr )
-        socket.write("GET /7 HTTP/1.1\nUser-Agent:Mozilla\n\n")
-        results = socket.read
+        url = URI.parse("http://#{addr}:#{port}/7").to_s
+        results = RemoteRequest.new("get").read(url)
       rescue => err
         return ["Error connecting to server: #{err.message}"]
       end
