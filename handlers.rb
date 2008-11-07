@@ -60,7 +60,8 @@ class IRCHandler
           # slice up the information into two parts
           command_array = self.process_commands($1, @@commands)
           # crunch data down to one message Array
-          message = self.do_command(command_array[0], command_array[1], event) unless command_array.nil? or command_array[0].nil? or command_array[1].nil?
+          return false if !command_array or command_array.nil? or command_array[0].nil? or command_array[1].nil?
+          message = self.do_command(command_array[0], command_array[1], event) 
           if message[0].class == Array
             message[0].each do |thismessage|
               if message[1] == "notice" or $1 =~ /^help/
