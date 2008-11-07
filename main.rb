@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 #gems
 require 'rubygems'
 require 'memcache'
@@ -8,32 +10,35 @@ require 'yaml'
 require 'active_record'
 require 'cgi'
 require 'tzinfo'
-require 'remote_request'
 require 'hpricot'
 require 'json'
 
 #custom libraries
-require 'logging.rb'
-require 'lib/Ruby-IRC/IRC.rb'
-require 'database.rb'
-require 'includes.rb'
+require 'core/logging.rb'
+require 'core/lib/Ruby-IRC/IRC.rb'
+require 'core/database.rb'
+require 'core/includes.rb'
+require 'core/remote_request.rb'
 
 #config
-load 'config.rb'
+load 'core/config.rb'
+
+#models
+load 'models/users.rb'
+load 'models/configs.rb'
 
 #modules
-load 'wowhead.rb'
-load 'tvshows.rb'
-load 'armory.rb'
-load 'youtube.rb'
-load 'weather.rb'
-load 'users.rb'
-load 'rupture.rb'
-load 'election.rb'
-load 'shoutcast.rb'
+load 'modules/wowhead.rb'
+load 'modules/tvshows.rb'
+load 'modules/armory.rb'
+load 'modules/youtube.rb'
+load 'modules/weather.rb'
+load 'modules/rupture.rb'
+load 'modules/election.rb'
+load 'modules/shoutcast.rb'
 
 #message handler, load last
-load 'handlers.rb'
+load 'core/handlers.rb'
 
 @@loopmsg = ""
 

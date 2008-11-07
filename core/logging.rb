@@ -6,7 +6,7 @@ end
 
 def logger
   if @logger.nil?
-    @logger = Logger.new("bot.log")
+    @logger = Logger.new("logs/bot.log")
     @logger.level = Logger::DEBUG
   end
   @logger

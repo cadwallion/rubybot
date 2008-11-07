@@ -7,7 +7,7 @@
 #
 
 # change this to the directory you run your bot from:
-botdir="/usr/home/irc/wowrubybot"
+botdir="/usr/home/irc/wowheadbot"
 
 # change this to the name of your bot's script in that directory:
 botscript="/usr/local/bin/ruby main.rb"
