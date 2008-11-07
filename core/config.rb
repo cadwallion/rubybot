@@ -5,8 +5,6 @@ def setup_config
     @@commands.merge! YAML::load(File.open(config))
   end
 
-  log_message(@@commands.inspect)
-
   # load all config vars into global @@c var
   configs = Conf.find(:all)
   @@c = {}

@@ -7,6 +7,9 @@ class ChannelModule
         @@channels = Channel.find(:all)
         @@bot.add_channel(args[0])
         return "Joined #{args[0]}"
+      else
+        @@bot.add_channel(args[0])
+        return "I am already in that channel"
       end
     end
     return "You can't do that"
@@ -21,7 +24,8 @@ class ChannelModule
           @@bot.del_channel(event.channel)
           return "Left #{event.channel}"
         else
-          return "Couldn't find channel"
+          @@bot.del_channel(event.channel)
+          return "I am not in that channel"
         end
       end
     else

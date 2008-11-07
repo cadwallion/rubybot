@@ -1,0 +1,7 @@
+user:
+  help: 'User help'
+  add:
+    help: 'Add a user'
+  hostmask:
+    help: 'Example hostmask'
+    command: UserModule.get_hostmask
