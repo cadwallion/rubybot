@@ -12,20 +12,31 @@ require 'cgi'
 require 'tzinfo'
 require 'hpricot'
 require 'json'
+require 'net/http'
+require 'uri'
+require 'time'
+
 
 #custom libraries
 require 'core/logging.rb'
 require 'core/lib/Ruby-IRC/IRC.rb'
-require 'core/database.rb'
 require 'core/includes.rb'
 require 'core/remote_request.rb'
+
+#setup database
+require 'core/database.rb'
+
+#models
+load 'models/configs.rb'
+load 'models/users.rb'
+load 'models/hosts.rb'
+load 'models/channels.rb'
 
 #config
 load 'core/config.rb'
 
-#models
-load 'models/users.rb'
-load 'models/configs.rb'
+#setup caching
+require 'core/memcache.rb'
 
 #modules
 load 'modules/wowhead.rb'
@@ -54,32 +65,38 @@ pid = fork do
     pidfile.close
 
     #allow bot to bind to a specific IP -- optional
-    if @bindip.nil?
-      @@bot = IRC.new(@nickname, @server_address, @server_port, @realname)
+    if @@c['bindip'].nil?
+      @@bot = IRC.new(@@c['nickname'], @@c['server_address'], @@c['server_port'], @@c['realname'])
     else
-      @@bot = IRC.new(@nickname, @server_address, @server_port, @realname, @bindip)
+      @@bot = IRC.new(@@c['nickname'], @@c['server_address'], @@c['server_port'], @@c['realname'], @@c['bindip'])
     end
 
     #after receiving the endofmotd message, start login events
     IRCEvent.add_callback('endofmotd') do |event|
-      @@bot.send_message("Nickserv", "identify #{@nickserv_pass}") unless @nickserv_pass.nil?
-      @channels.each do |channel|
-        @@bot.add_channel(channel)
+      @@bot.send_message("Nickserv", "identify #{@@c['nickserv_pass']}") unless @@c['nickserv_pass'].nil?
+      @@channels.each do |channel|
+        if channel.password.nil?
+          @@bot.add_channel(channel.name)
+        else
+          @@bot.add_channel("#{channel.name} #{channel.password}")
+        end
       end
       i = 0
       th = Thread.new do
         loop do
-            users = User.find(:all, :conditions => "rupture NOT NULL")
-            users.each do |user|
-              events = Rupture.get_xml(user.nickname, user.rupture)
-                unless events.nil?
-                RUPTURE_CHANNEL.each do |rupture_channel|
+          users = User.find(:all, :conditions => "rupture NOT NULL")
+          users.each do |user|
+            events = Rupture.get_xml(user.nickname, user.rupture)
+            unless events.nil?
+              @@channels.each do |channel|
+                if channel.rupture == 1
                   events.each do |event|
                     Rupture.send_message(rupture_channel, user.nickname, event)
                   end
                 end
               end
             end
+          end
           i=i+1
           @@loopmsg = "On loop number #{i.to_s}"
           sleep(300)

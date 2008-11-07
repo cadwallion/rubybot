@@ -1,7 +1,3 @@
-require 'net/http'
-require 'uri'
-require 'time'
-
 class RemoteRequest
   def initialize(method)
     method = 'get' if method.nil?

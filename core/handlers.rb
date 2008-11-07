@@ -1,6 +1,3 @@
-# load all bots commands, help, and correlation to its Object reference
-@@commands = YAML::load( File.open( 'commands.yml' ) )
-
 # initialization of event handler
 @message_proc = Proc.new do |event|
   begin
@@ -31,20 +28,22 @@ class IRCHandler
     # gets the hostmask
     from_hostmask = event.hostmask
     # validates that event is a bot command.  check based on COMMAND_CHAR regex
-    if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
+    if event.message =~ Regexp.new("^#{@@c['command_char']}(.*)", true)
       # valid bot command, send to processor
       self.process_message(event)
     end
 
     #Youtube
-    if YOUTUBELINKS == true
-      # is event a youtube link?
-      if event.message =~ /^http\:\/\/www\.?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i
-        value = $1
-        unless value.nil?
-          # grab youtube information
-          youtube = Youtube.get_movie(value)
-          @@bot.send_message(self.get_target(event), youtube) if youtube != ""
+    if event.message =~ /^http\:\/\/www\.?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i # is event a youtube link?
+    youtube_id = $1
+      if target =~ /^\#(.*)/ #target is a channel
+        channel = Channel.find_by_name(target)
+        if !channel.nil? and channel.youtube == 1
+          unless youtube_id.nil?
+            # grab youtube information
+            youtube = Youtube.get_movie(youtube_id)
+            @@bot.send_message(self.get_target(event), youtube) if youtube != ""
+          end
         end
       end
     end
@@ -56,7 +55,7 @@ class IRCHandler
         # set to global var for use in the Object associated with the command
         @@event = event
         # check for valid bot command event.  Possibly a duplicate?
-        if event.message =~ Regexp.new("^#{COMMAND_CHAR}(.*)", true)
+        if event.message =~ Regexp.new("^#{@@c['command_char']}(.*)", true)
           # slice up the information into two parts
           command_array = self.process_commands($1, @@commands)
           # crunch data down to one message Array
@@ -120,27 +119,24 @@ class IRCHandler
   end
 
   def self.reload_bot(args, event)
-    load 'armory.rb'
-    load 'wowhead.rb'
-    load 'tvshows.rb'
-    load 'youtube.rb'
-    load 'users.rb'
-    load 'weather.rb'
-    load 'config.rb'
-    load 'rupture.rb'
-    load 'election.rb'
-    load 'shoutcast.rb'
-    load 'handlers.rb'
+    load 'modules/armory.rb'
+    load 'modules/wowhead.rb'
+    load 'modules/tvshows.rb'
+    load 'modules/youtube.rb'
+    load 'modules/weather.rb'
+    load 'modules/rupture.rb'
+    load 'modules/election.rb'
+    load 'modules/shoutcast.rb'
+    load 'core/config.rb'
+    load 'core/handlers.rb'
     return "Reloaded!"
   end
 
   def self.kill_bot(args, event)
-    ADMINHOSTS.each do |adminhost|
-      if event.hostmask == adminhost
-        @@bot.send_quit
-        exit
-        return ""
-      end
+    if user = User.find(:first, :include => :hosts, :conditions => ["users.admin = ? and hosts.hostname = ?", 1, event.hostmask])
+      @@bot.send_quit
+      exit
+      return ""
     end
     return "You can't do that"
   end
@@ -159,8 +155,10 @@ class IRCHandler
 
   def self.join_channel(args, event)
     args = args.split
-    ADMINHOSTS.each do |adminhost|
-      if event.hostmask == adminhost
+    if user = User.find(:first, :include => :hosts, :conditions => ["users.admin = ? and hosts.hostname = ?", 1, event.hostmask])
+      unless channel = Channel.find_by_name(args[0])
+        Channel.create(:name => args[0])
+        @@channels = Channel.find(:all)
         @@bot.add_channel(args[0])
         return "Joined #{args[0]}"
       end
@@ -170,8 +168,10 @@ class IRCHandler
   
   def self.part_channel(args, event)
     if event.channel =~ /^\#(.*)$/
-      ADMINHOSTS.each do |adminhost|
-        if event.hostmask == adminhost
+      if user = User.find(:first, :include => :hosts, :conditions => ["users.admin = ? and hosts.hostname = ?", 1, event.hostmask])
+        if channel = @@channel.find_by_name(args[0])
+          channel.destroy
+          @@channels = Channel.find(:all)
           @@bot.del_channel(event.channel)
           return "Left #{event.channel}"
         end

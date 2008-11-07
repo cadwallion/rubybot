@@ -7,7 +7,7 @@ class Weather
       current_cached = CACHE.get("current_"+citycode)
       if current_cached.nil?
         output = nil
-        url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&prod=xoap&par=#{WEATHER_PAR}&key=#{WEATHER_API}").to_s
+        url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&prod=xoap&par=#{@@c['weather_par']}&key=#{@@c['weather_api']}").to_s
         xmldoc = RemoteRequest.new("get").read(url)
         weather = (REXML::Document.new xmldoc).root
         if weather.elements['/weather/cc'] then
@@ -35,7 +35,7 @@ class Weather
       if forecast_cached.nil?
         output = nil
         forecast = nil
-        url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&dayf=5&prod=xoap&par=#{WEATHER_PAR}&key=#{WEATHER_API}").to_s
+        url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&dayf=5&prod=xoap&par=#{@@c['weather_par']}&key=#{@@c['weather_api']}").to_s
         xmldoc = RemoteRequest.new("get").read(url)
           weather = (REXML::Document.new xmldoc).root
           if weather.elements['/weather/dayf'] then

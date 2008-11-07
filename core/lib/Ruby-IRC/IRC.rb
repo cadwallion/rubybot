@@ -1,9 +1,9 @@
 require 'socket'
-require 'lib/Ruby-IRC/IRCConnection.rb'
-require 'lib/Ruby-IRC/IRCEvent.rb'
-require 'lib/Ruby-IRC/IRCChannel.rb'
-require 'lib/Ruby-IRC/IRCUser.rb'
-require 'lib/Ruby-IRC/IRCUtil.rb'
+require 'core/lib/Ruby-IRC/IRCConnection.rb'
+require 'core/lib/Ruby-IRC/IRCEvent.rb'
+require 'core/lib/Ruby-IRC/IRCChannel.rb'
+require 'core/lib/Ruby-IRC/IRCUser.rb'
+require 'core/lib/Ruby-IRC/IRCUtil.rb'
 
 # Class IRC is a master class that handles connection to the irc
 # server and pasring of IRC events, through the IRCEvent class. 
