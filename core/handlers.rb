@@ -169,11 +169,13 @@ class IRCHandler
   def self.part_channel(args, event)
     if event.channel =~ /^\#(.*)$/
       if user = User.find(:first, :include => :hosts, :conditions => ["users.admin = ? and hosts.hostname = ?", 1, event.hostmask])
-        if channel = @@channel.find_by_name(args[0])
+        if channel = Channel.find_by_name(event.channel)
           channel.destroy
           @@channels = Channel.find(:all)
           @@bot.del_channel(event.channel)
           return "Left #{event.channel}"
+        else
+          return "Couldn't find channel"
         end
       end
     else
