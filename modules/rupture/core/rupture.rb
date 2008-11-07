@@ -1,4 +1,4 @@
-class Rupture
+class RuptureModule
   def self.get_xml(nickname, xmlstring)
     begin
       ruptureoutput = []
@@ -42,5 +42,9 @@ class Rupture
       user = User.create('nickname' => event.from, 'hostname' => event.hostmask, 'rupture' => args)
     end
     return "Saved rupture XML id as '#{args}'."
+  end
+  def self.check_loop(args, event)
+    return @@loopmsg unless @@loopmsg.nil?
+    return false
   end
 end

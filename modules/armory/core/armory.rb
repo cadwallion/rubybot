@@ -1,4 +1,4 @@
-class Armory
+class ArmoryModule
   def self.get_points(teamsize, rating)
     teamsize = teamsize.to_i
     rating = rating.to_i
@@ -22,15 +22,15 @@ class Armory
       else
         domain = 'eu.wowarmory.com'
       end
-      buffs = Armory.get_buffs(domain, $2, $3)
-      return [Armory.get_stats(domain, $2, $3), buffs] if buffs != ""
-      return Armory.get_stats(domain, $2, $3)
+      buffs = get_buffs(domain, $2, $3)
+      return [get_stats(domain, $2, $3), buffs] if buffs != ""
+      return get_stats(domain, $2, $3)
     end
     return false
   end
   def self.show_points(args, event)
     value = args.split
-    return "#{value[1]} rating = " + Armory.get_points(value[0], value[1])
+    return "#{value[1]} rating = " + get_points(value[0], value[1])
   end
   def self.armory_link(args, event)
     if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
@@ -50,7 +50,7 @@ class Armory
     else
       domain = 'eu.wowarmory.com'
     end
-    return Armory.get_buff_info(domain, value[1], value[2], value[3])
+    return get_buff_info(domain, value[1], value[2], value[3])
   end
   def self.get_spec(treeone,treetwo,treethree,characterclass)
     total = treeone.to_i + treetwo.to_i + treethree.to_i
@@ -155,7 +155,7 @@ class Armory
             'defenses_block' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/block'].attributes["percent"],
             'defenses_resilience' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/resilience'].attributes["value"],
           }
-          spec = Armory.get_spec(character["talents_1"],character["talents_2"],character["talents_3"],character["characterclass"].downcase)
+          spec = get_spec(character["talents_1"],character["talents_2"],character["talents_3"],character["characterclass"].downcase)
           if (@@class_show_stats.has_key?(character["characterclass"].downcase))
             output = "#{character["name"].capitalize}, Level #{character["level"]} #{character["race"]} #{character["gender"]} #{character["characterclass"]} (#{character["talents_1"]}/#{character["talents_2"]}/#{character["talents_3"]}): "
             stats = {}

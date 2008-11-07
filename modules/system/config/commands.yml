@@ -1,0 +1,21 @@
+ping:
+  help: "The format for @ping is '@ping'."
+  out: "Pong!"
+die:
+  help: "The format for @die is '@die'."
+  command: "SystemModule.kill_bot"
+count:
+  help: "The format for @count is '@count'."
+  command: "SystemModule.rickroll_count"
+reload:
+  help: "Reloads the bot. The format for @reload is '@char'."
+  command: "SystemModule.reload_bot"
+me:
+  help: "Tells you who I am! The format for @me is '@me'."
+  command: "SystemModule.whoami"
+roll:
+  help: "The format for @roll is '@roll [max roll]'"
+  command: "SystemModule.do_roll"
+help:
+  help: "You expect to get help on help? You sad person you."
+  command: "SystemModule.do_help"

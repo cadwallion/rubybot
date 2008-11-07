@@ -1,0 +1,6 @@
+wowhead:
+  help: "The format for @wowhead is '@wowhead <wotlk/live> <search term>'."
+  num_args: 2
+  regex: '^(wotlk|live) (.*)$'
+  command: "WowheadModule.display_results"
+

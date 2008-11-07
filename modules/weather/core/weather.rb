@@ -1,4 +1,4 @@
-class Weather
+class WeatherModule
   def self.convert_to_c(value)
     ( value.to_i - 32 ) * 5 / 9
   end
@@ -103,7 +103,7 @@ class Weather
     return false
   end
   def self.weather_search(args, event)
-    return Weather.search(args)
+    return search(args)
   end
   def self.weather_convert(args, event)
     temp_c = convert_to_c(args.to_i)
@@ -114,9 +114,9 @@ class Weather
     if args == "" and user.nil?
       "City code or zip code is required or city information must be saved."
     elsif args != ""
-      return Weather.get_current(args)
+      return get_current(args)
     else
-      return Weather.get_current(user.location)
+      return get_current(user.location)
     end
   end
   def self.weather_forecast(args, event)
@@ -124,9 +124,9 @@ class Weather
     if args == "" and user.nil?
       "City code or zip code is required or city information must be saved."
     elsif args != ""
-      return Weather.get_forecast(args)
+      return get_forecast(args)
     else
-      return Weather.get_forecast(user.location)
+      return get_forecast(user.location)
     end
   end
   def self.weather_save(args, event)

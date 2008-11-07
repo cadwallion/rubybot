@@ -1,4 +1,4 @@
-class Election
+class ElectionModule
   def self.get_results(args, event)
     return do_results
   end

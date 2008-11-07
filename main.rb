@@ -16,7 +16,6 @@ require 'net/http'
 require 'uri'
 require 'time'
 
-
 #custom libraries
 require 'core/logging.rb'
 require 'core/lib/Ruby-IRC/IRC.rb'
@@ -26,27 +25,19 @@ require 'core/remote_request.rb'
 #setup database
 require 'core/database.rb'
 
-#models
-load 'models/configs.rb'
-load 'models/users.rb'
-load 'models/hosts.rb'
-load 'models/channels.rb'
-
 #config
-load 'core/config.rb'
+require 'core/config.rb'
+
+#setup models from modules
+setup_models
+
+#setup config
+setup_config
 
 #setup caching
 require 'core/memcache.rb'
 
-#modules
-load 'modules/wowhead.rb'
-load 'modules/tvshows.rb'
-load 'modules/armory.rb'
-load 'modules/youtube.rb'
-load 'modules/weather.rb'
-load 'modules/rupture.rb'
-load 'modules/election.rb'
-load 'modules/shoutcast.rb'
+setup_modules
 
 #message handler, load last
 load 'core/handlers.rb'

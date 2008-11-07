@@ -1,4 +1,4 @@
-class TVShow
+class TVShowModule
   def self.search(term)
     begin
       url = URI.parse("http://www.tvrage.com/feeds/search.php?show=#{URI.encode(term)}").to_s
@@ -85,11 +85,11 @@ class TVShow
     end
   end
   def self.display_info(args, event)
-    showid = TVShow.search(args)
+    showid = search(args)
     return "Could not find show" unless showid
-    showinfo = TVShow.showinfo(showid)
+    showinfo = showinfo(showid)
     return "Could not find showinfo" unless showinfo
-    episodeinfo = TVShow.episodeinfo(showid)
+    episodeinfo = episodeinfo(showid)
     return "Could not find episodes" unless episodeinfo
     return "#{showinfo['name']} airs on #{showinfo['airday']}s at #{showinfo['airtime'].strftime("%I:%M%p")} Pacific Time on network '#{showinfo['network']}.'  The next episode is on #{episodeinfo['airdate']} called '#{episodeinfo['title']}'"
   end

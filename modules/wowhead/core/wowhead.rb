@@ -1,4 +1,4 @@
-class Wowhead
+class WowheadModule
   def self.search(domain, term)
     begin
       items = []
@@ -27,7 +27,7 @@ class Wowhead
     else
       domain = 'www.wowhead.com'
     end
-    items = Wowhead.search(domain, value[1]).collect_every(5)
+    items = search(domain, value[1]).collect_every(5)
     itemssmall = items[0]
     itemoutput = itemssmall.join(", ")
     return "Top 5: " + itemoutput

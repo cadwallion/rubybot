@@ -1,0 +1,24 @@
+weather:
+  help: "Weather reporting. The format for @weather is '@weather <report/forecast/search/save/reset/convert> <city information>'  City information is not required if you have already saved it."
+  report:
+    help: "The format for @weather report is '@weather report <city information>'  City information is not required if you have already saved it."
+    command: "WeatherModule.weather_report"
+  forecast:
+    help: "The format for @weather forecast is '@weather forecast <city information>'  City information is not required if you have already saved it."
+    command: "WeatherModule.weather_forecast"
+  search:
+    help: "The format for @weather search is '@weather search <city information>'"
+    command: "WeatherModule.weather_search"
+    num_args: 1
+  save:
+    help: "The format for @weather save is '@weather save <city information>'"
+    command: "WeatherModule.weather_save"
+    num_args: 1
+  reset:
+    help: "The format for @weather reset is '@weather reset'"
+    command: "WeatherModule.weather_reset"
+  convert:
+    help: "The format for @weather reset is '@weather covert <temperature in F>'"
+    command: "WeatherModule.weather_convert"
+    num_args: 1
+

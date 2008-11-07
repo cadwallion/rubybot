@@ -1,0 +1,6 @@
+election:
+  command: "ElectionModule.get_results"
+state:
+  command: "ElectionModule.get_state_results"
+  num_args: 1
+

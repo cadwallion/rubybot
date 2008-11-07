@@ -1,0 +1,7 @@
+join:
+  help: "Joins another channel.  The format for @join is '@join <#channel_name>'.  The # sign is required."
+  regex: '^\#(.*)$'
+  command: "ChannelModule.join_channel"
+part:
+  help: "Parts current channel.  The format for @part is '@part'."
+  command: "ChannelModule.part_channel"

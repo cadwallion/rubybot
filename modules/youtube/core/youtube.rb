@@ -1,4 +1,4 @@
-class Youtube
+class YoutubeModule
   def self.get_movie(movie)
     begin
       url = URI.parse("http://gdata.youtube.com/feeds/videos/#{URI.encode(movie)}").to_s

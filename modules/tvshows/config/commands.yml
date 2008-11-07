@@ -1,0 +1,4 @@
+tv:
+  help: "The format for @tv is '@tv <show name>'"
+  num_args: 1
+  command: "TVShowModule.display_info"

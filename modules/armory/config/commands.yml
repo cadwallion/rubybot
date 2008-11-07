@@ -1,0 +1,21 @@
+armory:
+  help: "Armory link generator. The format for @armory is '@armory <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu) (.*) ([a-zA-Z]*)$'
+  command: "ArmoryModule.armory_link"
+  num_args: 3
+char:  
+  help: "Armory Character Stats displayer. The format for @char is '@char <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu) (.*) ([a-zA-Z]*)$'
+  command: "ArmoryModule.char_info"
+  num_args: 3
+ap:
+  help: "Arena point calculator. The format for @ap is '@ap <5/3/2> <points>'."
+  regex: "^([235]) ([0-9]*)$"
+  num_args: 2
+  command: "ArmoryModule.show_points"
+buffinfo:
+  help: "Shows information about a buff on a character. The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'."
+  regex: '^(us|eu) (.*) ([a-zA-Z]*) (.*)$'
+  command: "ArmoryModule.buffinfo"
+  num_args: 3
+
