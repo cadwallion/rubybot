@@ -1,30 +1,43 @@
 #!/usr/bin/env ruby
 
+#require active record
+require 'rubygems'
+require 'active_record'
+
+#setup database
+require 'core/database.rb'
+
+#models
+load 'models/configs.rb'
+load 'models/users.rb'
+load 'models/hosts.rb'
+load 'models/channels.rb'
+
 #Bot user details
-Config.create(:config_name => 'nickname', :config_value => 'NickName')
-Config.create(:config_name => 'realname', :config_value => 'My Name')
-Config.create(:config_name => 'nickserv_pass', :config_value => 'password') #optional
+Conf.create(:config_name => 'nickname', :config_value => 'NickName')
+Conf.create(:config_name => 'realname', :config_value => 'My Name')
+Conf.create(:config_name => 'nickserv_pass', :config_value => 'password') #optional
 
 #Connection details
-Config.create(:config_name => 'server_address', :config_value => 'irc.freenode.net')
-Config.create(:config_name => 'server_port', :config_value => '6667')
-Config.create(:config_name => 'bindip', :config_value => '') #optional
+Conf.create(:config_name => 'server_address', :config_value => 'irc.freenode.net')
+Conf.create(:config_name => 'server_port', :config_value => '6667')
+Conf.create(:config_name => 'bindip', :config_value => '') #optional
 
 #Bot settings
-Config.create(:config_name => 'command_char', :config_value => '@')
+Conf.create(:config_name => 'command_char', :config_value => '@')
 
 #Memcache settings
-Config.create(:config_name => 'memcache_host', :config_value => 'localhost')
-Config.create(:config_name => 'memcache_port', :config_value => '11211')
-Config.create(:config_name => 'memcache_namespace', :config_value => 'rubybot')
+Conf.create(:config_name => 'memcache_host', :config_value => 'localhost')
+Conf.create(:config_name => 'memcache_port', :config_value => '11211')
+Conf.create(:config_name => 'memcache_namespace', :config_value => 'rubybot')
 
 #Weather module settings
-Config.create(:config_name => 'weather_par', :config_value => '')
-Config.create(:config_name => 'weather_api', :config_value => '')
+Conf.create(:config_name => 'weather_par', :config_value => '')
+Conf.create(:config_name => 'weather_api', :config_value => '')
 
 #Pownce module settings
-Config.create(:config_name => 'pownce_api_key', :config_value => '')
-Config.create(:config_name => 'pownce_api_secret', :config_value => '')
+Conf.create(:config_name => 'pownce_api_key', :config_value => '')
+Conf.create(:config_name => 'pownce_api_secret', :config_value => '')
 
 #Add user
 user = User.create(:nickname => 'AdminNick', :admin => 1)
