@@ -12,7 +12,7 @@ class RemoteRequest
     a = Time.now
     data = @opener.read(url)
     b = Time.now
-    log_error "Took #{b-a}s to get #{url}"
+    log_message "Took #{b-a}s to get #{url}"
     data
   end
 
@@ -32,32 +32,32 @@ private
           raise InvalidResponseFromFeed, file.message
         end
       rescue Timeout::Error => err
-        log_error "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+        log_message "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
         errors << "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
         sleep 10
         retry
       rescue Errno::ECONNREFUSED => err
-        log_error "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+        log_message "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
         errors << "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
         sleep 10
         retry
       rescue SocketError => exception
-        log_error "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+        log_message "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
         errors << "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
         sleep 10
         retry
       rescue EOFError => exception
-        log_error "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+        log_message "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
         errors << "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
         sleep 10
         retry
       rescue InvalidResponseFromFeed => err
-        log_error "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+        log_message "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
         errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
         sleep 10
         retry
       rescue => err
-        log_error "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+        log_message "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
         errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
         sleep 10
         retry
