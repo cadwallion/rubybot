@@ -15,7 +15,8 @@ class Wowhead
           ["No results found."]
         end
     rescue => err
-      ["Error retrieving search results: #{err.message} at #{err.backtrace.first}"]
+      log_error(err)
+      ["Error retrieving search results"]
     end
   end
 
