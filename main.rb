@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
 #include Config constants for OS type
-include Config
+if defined?(Config)
+  include Config
+end
 
 #gems
 require 'rubygems'
@@ -19,7 +21,7 @@ require 'net/http'
 require 'uri'
 require 'time'
 
-if CONFIG['host_os'] == "mswin32"
+if defined?(CONFIG) and CONFIG['host_os'] == "mswin32"
   require 'win32/process'
 end
 
@@ -55,7 +57,7 @@ load 'core/handlers.rb'
 pid = fork do
   begin
     log_message("Starting bot")
-    Signal.trap('HUP', 'IGNORE') if CONFIG['host_os'] != "mswin32" # Don't die upon logout
+    Signal.trap('HUP', 'IGNORE') if defined?(CONFIG) and CONFIG['host_os'] == "mswin32" # Don't die upon logout
 
     #open and write pid number to file
     pidfile = File.new("bot.pid", "w")
