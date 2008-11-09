@@ -7,11 +7,11 @@ class YoutubeModule
         if youtubeinfo.elements['/entry'] and youtubeinfo.elements['/entry/title'] then
           youtube = {
             'title' => youtubeinfo.elements['/entry/title'].text,
-            'duration' => youtubeinfo.elements['/entry/media:group/yt:duration'].attributes['seconds'],
-            'views' => youtubeinfo.elements['/entry/yt:statistics'].attributes['viewCount'],
-            'rating' => youtubeinfo.elements['/entry/gd:rating'].attributes['average'],
-            'ratings' => youtubeinfo.elements['/entry/gd:rating'].attributes['numRaters'],
-            'comments' => youtubeinfo.elements['/entry/gd:comments/gd:feedLink'].attributes['countHint'],
+            'duration' => (youtubeinfo.elements['/entry/media:group/yt:duration'].nil?) ? '' : youtubeinfo.elements['/entry/media:group/yt:duration'].attributes['seconds'],
+            'views' => (youtubeinfo.elements['/entry/yt:statistics'].nil?) ? '' : youtubeinfo.elements['/entry/yt:statistics'].attributes['viewCount'],
+            'rating' => (youtubeinfo.elements['/entry/gd:rating'].nil?) ? '' : youtubeinfo.elements['/entry/gd:rating'].attributes['average'],
+            'ratings' => (youtubeinfo.elements['/entry/gd:rating'].nil?) ? '' : youtubeinfo.elements['/entry/gd:rating'].attributes['numRaters'],
+            'comments' => (youtubeinfo.elements['/entry/gd:comments/gd:feedLink'].nil?) ? '' : youtubeinfo.elements['/entry/gd:comments/gd:feedLink'].attributes['countHint'],
           }
           "Youtube Video Info - Title: #{youtube['title']} - Duration: #{youtube['duration']} seconds - Views: #{youtube['views']} - Rating: #{youtube['rating']} (#{youtube['ratings']} ratings) - Comments: #{youtube['comments']}"
         else
