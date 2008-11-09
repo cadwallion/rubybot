@@ -19,6 +19,7 @@ class UserModule
 
   ## UTILITY COMMANDS ##
   def self.get_hostmasks(event)
+    log_message(@@hostmasks.inspect)
     hostmasks = @@hostmasks.select {|k,v| compare_hostmask(event.hostmask, k)}
     return hostmasks
   end
@@ -79,6 +80,8 @@ class UserModule
   end
   def self.generate_hostmasks
     # load all users into global @@hostmasks
+    @@hostmasks = nil
+    @@hostmasks = {}
     users = User.find(:all, :include => [:hosts])
     users.each do |user|
       user.hosts.each do |host|

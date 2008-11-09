@@ -1,9 +1,33 @@
-join:
-  help: "Joins another channel.  The format for @join is '@join <#channel_name>'.  The # sign is required."
-  regex: '^\#(.*)$'
-  command: "ChannelModule.join_channel"
-  admin: 1
-part:
-  help: "Parts current channel.  The format for @part is '@part'."
-  command: "ChannelModule.part_channel"
-  admin: 1
+channel:
+  join:
+    help: "Joins another channel.  The format for @join is '@join <#channel_name>'.  The # sign is required."
+    regex: '^\#(.*)$'
+    command: "ChannelModule.join_channel"
+    admin: 1
+  part:
+    help: "Parts current channel.  The format for @part is '@part'."
+    command: "ChannelModule.part_channel"
+    admin: 1
+  op:
+    help: "Gives you OP on the channel.  The format for @op is '@op'."
+    command: "ChannelModule.give_ops"
+    admin: 1
+  deop:
+    help: "Removes OP on the channel.  The format for @deop is '@deop'."
+    command: "ChannelModule.take_ops"
+    admin: 1
+  kick:
+    help: "Kicks user from channel.  The format for @kick is '@kick <target> <reason>'."
+    command: "ChannelModule.kick"
+    admin: 1
+    num_args: 1
+  ban:
+    help: "Bans user from channel.  The format for @ban is '@ban <target> <reason>'."
+    command: "ChannelModule.ban"
+    admin: 1
+    num_args: 1
+  unban:
+    help: "Unbans user from channel.  The format for @unban is '@unban <target>'."
+    command: "ChannelModule.unban"
+    admin: 1
+    num_args: 1

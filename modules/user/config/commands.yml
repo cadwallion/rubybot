@@ -1,13 +1,15 @@
 user:
   help: 'User help'
   add:
-    help: 'Add a user'
+    help: "Adds a user.  The format for @user add is '@user add <target>'."
     admin: 1
     command: 'UserModule.add_user'
+    num_args: 1
   hostmask:
-    help: 'Example hostmask'
+    help: "Shows what we would add a nick's hostmask as.  The format for @user hostmask is '@user hostmask <target>'."
     command: 'UserModule.get_hostmask'
     admin: 1
+    num_args: 1
   reload:
-    help: 'Reload database'
+    help: "Reloads user database."
     command: 'UserModule.reload_hostmasks'

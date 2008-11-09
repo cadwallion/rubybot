@@ -40,6 +40,8 @@ module IRCUtil
         # return the edited hostmask as a string.
         hostmask.gsub(/([\[\]\(\)\?\^\$])\\/, '\\1').
             gsub(/\./, '\.').
+            gsub(/\[/, '\[').
+            gsub(/\]/, '\]').
             gsub(/\*/, '.*').
             sub(/^/, '^').
             sub(/$/, '$')

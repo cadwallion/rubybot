@@ -27,4 +27,56 @@ class ChannelModule
       return "You need to do that from inside a channel."
     end
   end
+  def self.give_ops(args, event)
+    if event.channel =~ /^\#(.*)$/
+      @@bot.op(event.channel, event.from)
+      return ""
+    else
+      return "You need to do that from inside a channel."
+    end
+  end
+  def self.take_ops(args, event)
+    if event.channel =~ /^\#(.*)$/
+      @@bot.deop(event.channel, event.from)
+      return ""
+    else
+      return "You need to do that from inside a channel."
+    end
+  end
+  def self.kick(args, event)
+    args = args.split(' ', 2)
+    if event.channel =~ /^\#(.*)$/
+      @@bot.kick(event.channel, args[0], args[1])
+      return ""
+    else
+      return "You need to do that from inside a channel."
+    end
+  end
+  def self.ban(args, event)
+    args = args.split(' ', 2)
+    if hostmask = UserModule.get_hostmask_for_nick(args[0])
+      if event.channel =~ /^\#(.*)$/
+        @@bot.mode(event.channel, hostmask, "+b")
+        @@bot.kick(event.channel, args[0], args[1])
+        return ""
+      else
+        return "You need to do that from inside a channel."
+      end
+    else
+      return "Could not find user, try again in a few moments"
+    end
+  end
+  def self.unban(args, event)
+    args = args.split(' ', 2)
+    if hostmask = UserModule.get_hostmask_for_nick(args[0])
+      if event.channel =~ /^\#(.*)$/
+        @@bot.mode(event.channel, hostmask, "-b")
+        return ""
+      else
+        return "You need to do that from inside a channel."
+      end
+    else
+      return "Could not find user, try again in a few moments"
+    end
+  end
 end
