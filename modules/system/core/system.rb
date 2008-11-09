@@ -55,6 +55,15 @@ class SystemModule
     unless command[values[0]]['help'].nil?
       return command[values[0]]['help']
     end
+    if command[values[0]].size > 0
+      output = []
+      command[values[0]].each do |comm, value|
+        if comm != "command" and comm != "help" and comm != "out" and comm != "num_args" and comm != "regex"
+          output = output << comm
+        end
+      end
+      return "List of sub-commands: "+ output.join(", ") if output.size > 0
+    end
     return "No help found"
   end
 end
