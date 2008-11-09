@@ -7,11 +7,11 @@ require 'active_record'
 #setup database
 require 'core/database.rb'
 
-#models
-load 'models/configs.rb'
-load 'models/users.rb'
-load 'models/hosts.rb'
-load 'models/channels.rb'
+load 'core/config.rb'
+
+#setup
+setup_models
+setup_config
 
 #Bot user details
 Conf.create(:config_name => 'nickname', :config_value => 'NickName')
