@@ -2,6 +2,12 @@ user:
   help: 'User help'
   add:
     help: 'Add a user'
+    admin: 1
+    command: 'UserModule.add_user'
   hostmask:
     help: 'Example hostmask'
-    command: UserModule.get_hostmask
+    command: 'UserModule.get_hostmask'
+    admin: 1
+  reload:
+    help: 'Reload database'
+    command: 'UserModule.reload_hostmasks'

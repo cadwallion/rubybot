@@ -129,7 +129,7 @@ class IRC
   
   # Quits the IRC Server
   def send_quit
-    IRCConnection.send_to_server("QUIT : Quit ordered by user")
+    IRCConnection.send_to_server("QUIT :Quit ordered by user")
   end
   
   # Ops selected user.
@@ -156,6 +156,10 @@ class IRC
   # Retrievs user information from the server
   def get_user_info(user)
     IRCConnection.send_to_server("WHO #{user}")
+  end
+  #retrieves total list of users
+  def get_channel_list(channel)
+    IRCConnection.send_to_server("WHO #{channel}")
   end
   private
   def thread_event (event)

@@ -71,6 +71,10 @@ pid = fork do
 
     #after receiving the endofmotd message, start login events
     IRCEvent.add_callback('endofmotd') do |event|
+      # reset userlist
+      @@userlist = nil
+      @@userlist = {}
+
       @@bot.send_message("Nickserv", "identify #{@@c['nickserv_pass']}") unless @@c['nickserv_pass'].nil?
       @@channels.each do |channel|
         if channel.password.nil?
@@ -101,6 +105,10 @@ pid = fork do
         end
       end
     end
+
+    IRCEvent.add_handler('whoreply', @who_reply_proc)
+    IRCEvent.add_handler('join', @join_proc)
+    IRCEvent.add_handler('part', @part_proc)
 
     IRCEvent.add_handler('privmsg', @message_proc)
     @@bot.connect

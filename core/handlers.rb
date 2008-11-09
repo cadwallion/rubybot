@@ -7,6 +7,30 @@
   end
 end
 
+@who_reply_proc = Proc.new do |event|
+  begin
+    IRCHandler.who_reply(event)
+  rescue => err
+    log_error(err)
+  end
+end
+
+@join_proc = Proc.new do |event|
+  begin
+    IRCHandler.join(event)
+  rescue => err
+    log_error(err)
+  end
+end
+
+@part_proc = Proc.new do |event|
+  begin
+    IRCHandler.part(event)
+  rescue => err
+    log_error(err)
+  end
+end
+
 class IRCHandler
   # determines if the command came from a PM or channel
   def self.get_target(event)
@@ -17,6 +41,20 @@ class IRCHandler
       # event was a private message
       event.from
     end
+  end
+  
+  def self.who_reply(event)
+    UserModule.save_nick(event.stats[7], "#{event.stats[4]}@#{event.stats[5]}")
+  end
+
+  def self.join(event)
+    if event.from == @@c['nickname']
+      @@bot.get_channel_list(event.channel)
+    end
+    UserModule.save_nick(event.from, event.hostmask)
+  end
+
+  def self.part(event)
   end
   
   # initial response block from the event handler
@@ -103,6 +141,9 @@ class IRCHandler
     unless command['command'].nil?
       num_args = command['num_args'].nil? ? 0 : command['num_args'].to_i
       opts = args.split(' ')
+      if command['admin'] == 1
+        return ["You need to be an admin.", "notice"] unless UserModule.is_admin?(event)
+      end
       if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'])))
         unless command['help'].nil?
           return [command['help'], "notice"]

@@ -1,6 +1,6 @@
 CREATE TABLE 'hosts' (
 	'id' INTEGER PRIMARY KEY NOT NULL,
-        'user_id' INTEGER NOT NULL,
-	'hostname' VARCHAR(255) DEFAULT NULL
+	'user_id' INTEGER NOT NULL,
+	'hostmask' VARCHAR(255) DEFAULT NULL
 );
 

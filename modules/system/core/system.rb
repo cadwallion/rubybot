@@ -1,5 +1,6 @@
 class SystemModule
   def self.reload_bot(args, event)
+    load 'core/handlers.rb'
     setup_models
     setup_config
     setup_modules
@@ -7,12 +8,9 @@ class SystemModule
   end
 
   def self.kill_bot(args, event)
-    if user = User.find(:first, :include => :hosts, :conditions => ["users.admin = ? and hosts.hostname = ?", 1, event.hostmask])
-      @@bot.send_quit
-      exit
-      return ""
-    end
-    return "You can't do that"
+    @@bot.send_quit
+    exit
+    return ""
   end
 
   def self.rickroll_count(args, event)

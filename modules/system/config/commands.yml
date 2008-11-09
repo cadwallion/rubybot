@@ -4,6 +4,7 @@ ping:
 die:
   help: "The format for @die is '@die'."
   command: "SystemModule.kill_bot"
+  admin: 1
 count:
   help: "The format for @count is '@count'."
   command: "SystemModule.rickroll_count"
