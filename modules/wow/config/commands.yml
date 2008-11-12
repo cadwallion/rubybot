@@ -18,4 +18,8 @@ buffinfo:
   regex: '^(us|eu) (.*) ([a-zA-Z]*) (.*)$'
   command: "ArmoryModule.buffinfo"
   num_args: 3
+realmstatus:
+  help: "Shows realm up/down status.  The format for @realmstatus is '@realmstatus <us/eu>'."
+  command: "Wow.realmstatus"
+  num_args: 1
 
