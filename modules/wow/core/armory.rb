@@ -172,6 +172,20 @@ class ArmoryModule
             stats.sort.each do |statkey,stat|
               output = output + " #{stat}: #{character[statkey]};"
             end
+            if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
+              armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
+                if output.nil?
+                  buffs = "Buffs: "
+                  buffs = buffs + "#{buff.attributes["name"]}"
+                else
+                  buffs = buffs + ", #{buff.attributes["name"]}"
+                end
+              end
+            else
+              buffs = ""
+            end            
+            return [output, buffs] if buffs != ""
+            return output
             output
           else
             "Sorry, I don't know how to handle your class yet."
