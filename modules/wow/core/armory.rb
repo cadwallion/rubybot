@@ -22,9 +22,7 @@ class ArmoryModule
       else
         domain = 'eu.wowarmory.com'
       end
-      buffs = get_buffs(domain, $2, $3)
-      return [get_stats(domain, $2, $3), buffs] if buffs != ""
-      return get_stats(domain, $2, $3)
+      get_stats(domain, $2, $3)
     end
     return false
   end
