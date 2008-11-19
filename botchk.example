@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 #
 # Nefarian.botchk (generated on November 09, 2006 @ 10:51AM)
 #
@@ -7,7 +7,7 @@
 #
 
 # change this to the directory you run your bot from:
-botdir="/usr/home/irc/wowheadbot"
+botdir="/dir/to/bot"
 
 # change this to the name of your bot's script in that directory:
 botscript="/usr/local/bin/ruby main.rb"
@@ -17,7 +17,7 @@ pidfile="bot.pid"
 
 ########## you probably don't need to change anything below here ##########
 
-cd $botdir
+cd "$botdir"
 
 # is there a pid file?
 if test -r $pidfile

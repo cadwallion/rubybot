@@ -80,7 +80,7 @@ class ArmoryModule
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
       xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
+        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? and armoryinfo.elements['/page/characterInfo/characterTab']
           character = {
             #General info, class, race, etc
             'characterclass' => armoryinfo.elements['/page/characterInfo/character'].attributes['class'],
