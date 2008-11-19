@@ -41,7 +41,7 @@ Conf.create(:config_name => 'pownce_api_secret', :config_value => '')
 
 #Add user
 user = User.create(:nickname => 'AdminNick', :admin => 1)
-user.hosts.create(:hostname => 'i=admin@host.com')
+user.hosts.create(:hostmask => 'i=admin@host.com')
 
 #Add channels
 Channel.create(:name => '#channel')
