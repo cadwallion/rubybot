@@ -1,14 +1,14 @@
 class Wow
   def self.realmstatus(args, event)
-    if args =~ /^(us|eu)$/
-      if $1 == "us"
+    if args =~ /^(us|eu|US|EU)$/
+      if $1 == "us" or $1 == "US"
         return getrealmstatus_us
       else
         return getrealmstatus_eu
       end
     end
-    if args =~ /^(us|eu) (.*)$/
-      if $1 == "us"
+    if args =~ /^(us|eu|US|EU) (.*)$/
+      if $1 == "us" or $1 == "US"
         return getonerealmstatus_us($2)
       else
         return getonerealmstatus_eu($2)
@@ -40,6 +40,7 @@ class Wow
   end
 
   def self.getonerealmstatus_us(realm)
+    realm = realm.gsub(/\'([a-z])/) {|s| s.upcase }
     url = URI.parse("http://www.worldofwarcraft.com/realmstatus/status-events-rss.html?r=#{URI.encode(realm)}").to_s  
     xmldoc = RemoteRequest.new("get").read(url)
     armoryinfo = (REXML::Document.new xmldoc).root
@@ -53,6 +54,8 @@ class Wow
       else
         return "Unknown status"
       end
+    else
+      return "Could not find realm #{realm}, check capitalization and spelling."
     end
     return false
   end
@@ -74,6 +77,9 @@ class Wow
           end
         end
       end
+      return "Could not find realm #{realm}, check capitalization and spelling."
+    else
+      return "Could not find realm #{realm}, check capitalization and spelling."
     end
     return false
   end

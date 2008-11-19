@@ -6,6 +6,7 @@ class RemoteRequest
 
   def read(url)
     a = Time.now
+    log_message "Getting #{url}"
     data = @opener.read(url)
     b = Time.now
     log_message "Took #{b-a}s to get #{url}"

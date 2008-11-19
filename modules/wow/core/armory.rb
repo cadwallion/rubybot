@@ -22,7 +22,7 @@ class ArmoryModule
       else
         domain = 'eu.wowarmory.com'
       end
-      get_stats(domain, $2, $3)
+      return get_stats(domain, $2, $3)
     end
     return false
   end
@@ -73,7 +73,7 @@ class ArmoryModule
         output = output.merge({treethree.to_i => @@class_talent_trees[characterclass][2]})
       end
     end
-    output
+    return output
   end
   def self.get_stats(domain, realm, charactername)
     begin
@@ -153,8 +153,8 @@ class ArmoryModule
             'defenses_block' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/block'].attributes["percent"],
             'defenses_resilience' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/resilience'].attributes["value"],
           }
-          spec = get_spec(character["talents_1"],character["talents_2"],character["talents_3"],character["characterclass"].downcase)
           if (@@class_show_stats.has_key?(character["characterclass"].downcase))
+            spec = get_spec(character["talents_1"],character["talents_2"],character["talents_3"],character["characterclass"].downcase)
             output = "#{character["name"].capitalize}, Level #{character["level"]} #{character["race"]} #{character["gender"]} #{character["characterclass"]} (#{character["talents_1"]}/#{character["talents_2"]}/#{character["talents_3"]}): "
             stats = {}
             @@class_show_stats[character["characterclass"].downcase]["base"].sort.each do |statkey, stat|
@@ -171,8 +171,9 @@ class ArmoryModule
               output = output + " #{stat}: #{character[statkey]};"
             end
             if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
+              buffs = ""
               armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
-                if output.nil?
+                if buffs.nil? or buffs == ""
                   buffs = "Buffs: "
                   buffs = buffs + "#{buff.attributes["name"]}"
                 else
@@ -181,18 +182,17 @@ class ArmoryModule
               end
             else
               buffs = ""
-            end            
+            end
             return [output, buffs] if buffs != ""
             return output
-            output
           else
-            "Sorry, I don't know how to handle your class yet."
+            return "Sorry, I don't know how to handle your class yet."
           end
         else
-          "Character #{charactername}, not found."
+          return "Character #{charactername}, not found."
         end
     rescue => err
-      "Error retrieving character profile: #{err.message}"
+      log_error(err)
     end
   end
   def self.get_buffs(domain, realm, charactername)
@@ -215,7 +215,7 @@ class ArmoryModule
           ""
         end
     rescue => err
-      "Error retrieving character buffs: #{err.message}"
+      log_error(err)
     end
   end
   def self.get_buff_info(domain, realm, charactername, buffname)
@@ -239,12 +239,13 @@ class ArmoryModule
           "Character not found"
         end
     rescue => err
-      "Error retrieving character buffs: #{err.message}"
+      log_error(err)
     end
   end
 end
 
 @@class_talent_trees = {
+  'death knight' => ['blood', 'frost', 'unholy'],
   'druid' => ['balance', 'feral', 'restoration'],
   'hunter' => ['beastmastery', 'marksmanship', 'survival'],
   'mage' => ['arcane', 'fire', 'frost'],
@@ -257,6 +258,9 @@ end
 }
 
 @@class_show_stats = {
+  'death knight' => {
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience'},
+  },
   'druid' => {
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
     'balance' => {'spell_arcane_damage' => 'Arcane Damage', 'spell_arcane_crit' => 'Arcane Crit %', 'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration'},

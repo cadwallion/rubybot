@@ -146,15 +146,24 @@ class IRCHandler
       end
       if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'])))
         unless command['help'].nil?
-          return [command['help'], "notice"]
+          return ["An error has occurred, check format. " + command['help'], "notice"]
         else
           return ["An unknown error has occurred", "notice"]
         end
       end
-      return [eval(command['command'] + "(args, event)"), "message"]
+      output = eval(command['command'] + "(args, event)")
+      if output != false
+        return [output, "message"]
+      else
+        unless command['help'].nil?
+          return ["An error has occurred, check format. " + command['help'], "notice"]
+        else
+          return ["An unknown error has occurred", "notice"]
+        end
+      end
     end
     unless command['help'].nil?
-      return [command['help'], "notice"]
+      return ["An error has occurred, check format. " + command['help'], "notice"]
     end
     return ["An unknown error has occurred", "notice"]
   end
