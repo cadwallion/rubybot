@@ -28,7 +28,7 @@ class IRCEvent
 #    @stats = mess_parts[0].scan(/\w+/)
     if @stats[0].match(/^PING/)
       @event_type = 'ping'
-    elsif @stats[1] && @stats[1].match(/^\d+/)
+    elsif @stats[1] && @stats[1].match(/^\d+$/)
       @event_type = EventLookup::find_by_number(@stats[1]);
       @channel = @stats[3]
     else
