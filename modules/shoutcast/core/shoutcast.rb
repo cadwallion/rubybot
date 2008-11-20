@@ -4,6 +4,10 @@ class ShoutcastModule
     if args =~ /^(.*) (.*)$/
       addr = $1
       port = $2
+    else 
+      addr = "205.188.215.227"
+      port = "8024"
+    end
       begin
         url = URI.parse("http://#{addr}:#{port}/7").to_s
         results = RemoteRequest.new("get").read(url)
@@ -21,7 +25,6 @@ class ShoutcastModule
       else
         return "Sorry! No Response from selected server.  Check your parameters."
       end
-    end
   end
   
   # format and output of data from stream

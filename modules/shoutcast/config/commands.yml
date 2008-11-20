@@ -1,6 +1,4 @@
 stream:
   help: "Gathers Shoutcast Stream Information.  The format for @stream is '@stream <address> <port>'."
-  num_args: 2
-  regex: '^[0-9\.]* [0-9]*$'
   command: "ShoutcastModule.connect"
 
