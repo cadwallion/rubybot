@@ -23,10 +23,27 @@ class UserModule
     hostmasks = @@hostmasks.select {|k,v| compare_hostmask(event.hostmask, k)}
     return hostmasks
   end
+  def self.get_user(event)
+    if hostmasks = get_hostmasks(event)
+      hostmasks.each do |hostmask|
+        return hostmask[1]
+      end
+    end
+    return false
+  end
+  def self.create_user(event)
+    unless user = get_user(event)
+      hostmask = get_hostmask_for_nick(event.from)
+      user = User.create(:nickname => event.from)
+      user.hosts.create(:hostmask => hostmask)
+      generate_hostmasks
+    end
+    return user
+  end
   def self.is_admin?(event)
     if hostmasks = get_hostmasks(event)
       hostmasks.each do |hostmask|
-        if hostmask[1][1] == 1
+        if hostmask[1]['admin'] == 1
           return true
         end
       end
@@ -85,7 +102,7 @@ class UserModule
     users = User.find(:all, :include => [:hosts])
     users.each do |user|
       user.hosts.each do |host|
-        @@hostmasks[host.hostmask] = [user.nickname, user.admin]
+        @@hostmasks[host.hostmask] = user
       end
     end
   end

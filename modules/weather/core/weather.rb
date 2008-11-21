@@ -95,8 +95,8 @@ class WeatherModule
   end
 
   def self.weather_reset(args, event)
-    if user = User.find_by_nickname(event.from)
-      if user.destroy
+    if user = UserModule.get_user(event)
+      if user.update_attributes('location' => nil)
         return "Reset location"
       end
     end
@@ -110,7 +110,7 @@ class WeatherModule
     return "#{args.to_s}F is #{temp_c.to_s}C"
   end
   def self.weather_report(args, event)
-    user = User.find_by_nickname(event.from)
+    user = UserModule.get_user(event)
     if args == "" and user.nil?
       "City code or zip code is required or city information must be saved."
     elsif args != ""
@@ -120,7 +120,7 @@ class WeatherModule
     end
   end
   def self.weather_forecast(args, event)
-    user = User.find_by_nickname(event.from)
+    user = UserModule.get_user(event)
     if args == "" and user.nil?
       "City code or zip code is required or city information must be saved."
     elsif args != ""
@@ -130,12 +130,9 @@ class WeatherModule
     end
   end
   def self.weather_save(args, event)
-    if user = User.find_by_nickname(event.from)
-      user.update_attributes('location' => args)
-      user.save
-    else
-      user = User.create('nickname' => event.from, 'hostname' => event.hostmask, 'location' => args)
-    end
+    user = UserModule.create_user(event)
+    user.update_attributes('location' => args)
+    user.save
     return "Saved location"
   end
 end
