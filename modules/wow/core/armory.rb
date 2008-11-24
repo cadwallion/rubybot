@@ -1,4 +1,11 @@
 class ArmoryModule
+  def self.domain_check(arg)
+    if arg == "us"
+      return "www.wowarmory.com"
+    else
+      return "eu.wowarmory.com"
+    end
+  end
   def self.get_points(teamsize, rating)
     teamsize = teamsize.to_i
     rating = rating.to_i
@@ -17,11 +24,7 @@ class ArmoryModule
   end
   def self.char_info(args, event)
     if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
-      if $1 == "us"
-        domain = 'www.wowarmory.com'
-      else
-        domain = 'eu.wowarmory.com'
-      end
+      domain = domain_check($1)
       return get_stats(domain, $2, $3)
     end
     return false
@@ -32,22 +35,14 @@ class ArmoryModule
   end
   def self.armory_link(args, event)
     if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
-      if $1 == "us"
-        domain = 'www.wowarmory.com'
-      else
-        domain = 'eu.wowarmory.com'
-      end
+      domain = domain_check($1)
       return "#{$3.capitalize}'s profile: http://#{domain}/character-sheet.xml?r=#{URI.encode($2.capitalize)}&n=#{URI.encode($3.capitalize)}"
     end
     return false
   end
   def self.buffinfo(args, event)
     value = args.split(' ', 4)
-    if value[0] =~ /^us$/i
-      domain = 'www.wowarmory.com'
-    else
-      domain = 'eu.wowarmory.com'
-    end
+    domain = domain_check(value[0])
     return get_buff_info(domain, value[1], value[2], value[3])
   end
   def self.get_spec(treeone,treetwo,treethree,characterclass)
