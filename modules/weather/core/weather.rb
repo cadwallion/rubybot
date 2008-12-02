@@ -1,11 +1,16 @@
 class WeatherModule
   def self.convert_to_c(value)
-    ( value.to_i - 32 ) * 5 / 9
+    log_message value
+    if value =~ /^[0-9]*$/
+      ( value.to_i - 32 ) * 5 / 9
+    else
+      "N/A"
+    end
   end
   def self.get_current(citycode)
     begin
-      current_cached = CACHE.get("current_"+citycode)
-      if current_cached.nil?
+      current_cached = CACHE.get("current_"+citycode, force=false)
+      if current_cached.nil? or force != false
         output = nil
         url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&prod=xoap&par=#{@@c['weather_par']}&key=#{@@c['weather_api']}").to_s
         xmldoc = RemoteRequest.new("get").read(url)
@@ -29,10 +34,10 @@ class WeatherModule
       "Error retrieving weather."
     end
   end
-  def self.get_forecast(citycode)
+  def self.get_forecast(citycode, force=false)
     begin
       forecast_cached = CACHE.get("forecast_"+citycode)
-      if forecast_cached.nil?
+      if forecast_cached.nil? or force != false
         output = nil
         forecast = nil
         url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&dayf=5&prod=xoap&par=#{@@c['weather_par']}&key=#{@@c['weather_api']}").to_s
@@ -41,7 +46,7 @@ class WeatherModule
           if weather.elements['/weather/dayf'] then
             forecast = "Location: #{weather.elements['/weather/loc/dnam'].text}"
             weather.elements.each('/weather/dayf/day') do |day|
-              forecast = forecast + " | #{day.attributes["t"]} #{day.attributes["dt"]} - High: #{day.elements['hi'].text}F (#{convert_to_c(day.elements['hi'].text)}C) - Low: #{day.elements['low'].text}F (#{convert_to_c(day.elements['low'].text)})"
+              forecast = forecast + " | #{day.attributes["t"]} #{day.attributes["dt"]} - High: #{day.elements['hi'].text}F (#{convert_to_c(day.elements['hi'].text)}C) - Low: #{day.elements['low'].text}F (#{convert_to_c(day.elements['low'].text)}C)"
               day.elements.each('part') do |part|
                 if part.attributes["p"] == "n"
                   forecast = forecast + " - Night: #{part.elements['t'].text}"
@@ -106,25 +111,35 @@ class WeatherModule
     return search(args)
   end
   def self.weather_convert(args, event)
-    temp_c = convert_to_c(args.to_i)
+    temp_c = convert_to_c(args)
     return "#{args.to_s}F is #{temp_c.to_s}C"
   end
   def self.weather_report(args, event)
+    args = args.split
     user = UserModule.get_user(event)
-    if args == "" and user.nil?
+    if args.size == 0 and user.nil?
       "City code or zip code is required or city information must be saved."
-    elsif args != ""
-      return get_current(args)
+    elsif args.size != 0
+      if args.size > 1
+        return get_current(args[0], true)
+      else
+        return get_current(args[0])
+      end
     else
       return get_current(user.location)
     end
   end
   def self.weather_forecast(args, event)
+    args = args.split
     user = UserModule.get_user(event)
-    if args == "" and user.nil?
+    if args.size == 0 and user.nil?
       "City code or zip code is required or city information must be saved."
-    elsif args != ""
-      return get_forecast(args)
+    elsif args.size != 0
+      if args.size > 1
+        return get_forecast(args[0], true)
+      else
+        return get_forecast(args[0])
+      end
     else
       return get_forecast(user.location)
     end
