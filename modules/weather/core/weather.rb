@@ -7,9 +7,9 @@ class WeatherModule
       "N/A"
     end
   end
-  def self.get_current(citycode)
+  def self.get_current(citycode, force=false)
     begin
-      current_cached = CACHE.get("current_"+citycode, force=false)
+      current_cached = CACHE.get("current_"+citycode)
       if current_cached.nil? or force != false
         output = nil
         url = URI.parse("http://xoap.weather.com/weather/local/#{CGI.escape(citycode)}?cc=*&link=xoap&prod=xoap&par=#{@@c['weather_par']}&key=#{@@c['weather_api']}").to_s
