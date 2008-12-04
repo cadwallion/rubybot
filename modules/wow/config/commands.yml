@@ -1,11 +1,11 @@
 armory:
   help: "Armory link generator. The format for @armory is '@armory <us/eu> <realm name> <character name>'."
-  regex: '^(us|eu|US|EU) (.*) ([a-zA-Z]*)$'
+  regex: '^(us|eu|US|EU) (.*) (.*)$'
   command: "ArmoryModule.armory_link"
   num_args: 3
 char:  
   help: "Armory Character Stats displayer. The format for @char is '@char <us/eu> <realm name> <character name>'."
-  regex: '^(us|eu|US|EU) (.*) ([a-zA-Z]*)$'
+  regex: '^(us|eu|US|EU) (.*) (.*)$'
   command: "ArmoryModule.char_info"
   num_args: 3
 ap:

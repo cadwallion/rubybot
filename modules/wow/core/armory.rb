@@ -23,7 +23,7 @@ class ArmoryModule
     end
   end
   def self.char_info(args, event)
-    if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
+    if args =~ /^(us|eu) (.*) (.*)$/
       domain = domain_check($1)
       return get_stats(domain, $2, $3)
     end
@@ -34,7 +34,7 @@ class ArmoryModule
     return "#{value[1]} rating = " + get_points(value[0], value[1])
   end
   def self.armory_link(args, event)
-    if args =~ /^(us|eu) (.*) ([a-zA-Z]*)$/
+    if args =~ /^(us|eu) (.*) (.*)$/
       domain = domain_check($1)
       return "#{$3.capitalize}'s profile: http://#{domain}/character-sheet.xml?r=#{URI.encode($2.capitalize)}&n=#{URI.encode($3.capitalize)}"
     end
@@ -293,7 +293,7 @@ end
     'restoration' => {'spell_bonus_healing' => 'Plus Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5'},
   },
   'warlock' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'defenses_resilience' => 'Resilience'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'defenses_resilience' => 'Resilience', 'spell_fire_damage' => 'Fire Damage', 'spell_fire_crit' => 'Fire Crit %'},
   },
   'warrior' => {
     'base' => {'health' => 'Health', 'defenses_resilience' => 'Resilience'},
