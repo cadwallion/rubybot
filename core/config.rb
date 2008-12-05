@@ -11,9 +11,6 @@ def setup_config
   configs.each do |config|
     @@c[config.config_name] = config.config_value
   end
-
-  # load all channels into global @@channels
-  @@channels = Channel.find(:all)
 end
 
 def setup_models
@@ -26,4 +23,5 @@ def setup_modules
   Dir['**/modules/*/core/*.rb'].each do |mod|
     load mod
   end
+  # load all channels into global @@channels
 end

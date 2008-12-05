@@ -4,7 +4,7 @@ class ChannelModule
     unless Channel.find_by_name(args[0])
       channel = Channel.create(:name => args[0])
       channel.save
-      @@channels = Channel.find(:all)
+      reload_channels
       @@bot.add_channel(args[0])
       return "Joined #{args[0]}"
     else
@@ -18,7 +18,7 @@ class ChannelModule
       if channel = Channel.find_by_name(event.channel)
         channel.destroy
         channel.save
-        @@channels = Channel.find(:all)
+        reload_channels
         @@bot.del_channel(event.channel)
         return "Left #{event.channel}"
       else
@@ -36,13 +36,13 @@ class ChannelModule
         if channel.quiet == 1
           channel.quiet = 0
           channel.save
+          reload_channels
           return "Made #{event.channel} not quiet"
-          @@channels = Channel.find(:all)
         else
           channel.quiet = 1
           channel.save
+          reload_channels
           return "Made #{event.channel} quiet"
-          @@channels = Channel.find(:all)
         end
       else
         return "Could not find channel"
@@ -54,7 +54,7 @@ class ChannelModule
 
   def self.is_quiet?(channel)
     if channel =~ /^\#(.*)$/
-      if channel = Channel.find_by_name('#'+$1)
+      if channel = @@channels['#'+$1]
         if channel.quiet == 1
           return true
         else
@@ -118,6 +118,14 @@ class ChannelModule
       end
     else
       return "Could not find user, try again in a few moments"
+    end
+  end
+  def self.reload_channels
+    channels = Channel.find(:all)
+    @@channels = nil
+    @@channels = {}
+    channels.each do |channel|
+      @@channels.merge!({channel.name => channel})
     end
   end
 end

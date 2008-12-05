@@ -46,6 +46,9 @@ setup_config
 #setup caching
 require 'core/memcache.rb'
 
+@@channels = nil
+@@channels = {}
+
 setup_modules
 
 #message handler, load last
@@ -73,12 +76,16 @@ pid = fork do
 
     #after receiving the endofmotd message, start login events
     @logged_in = Proc.new do |event|
-      # reset userlist
+      log_message("OMG logged in!")
+      # reset userlist and channels
       @@userlist = nil
       @@userlist = {}
 
       @@bot.send_message("Nickserv", "identify #{@@c['nickserv_pass']}") unless @@c['nickserv_pass'].nil?
-      @@channels.each do |channel|
+      log_message("Reloading channels")
+      ChannelModule.reload_channels
+      
+      @@channels.each do |channelname, channel|
         if channel.password.nil?
           @@bot.add_channel(channel.name)
         else
