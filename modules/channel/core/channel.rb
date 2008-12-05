@@ -2,7 +2,8 @@ class ChannelModule
   def self.join_channel(args, event)
     args = args.split
     unless Channel.find_by_name(args[0])
-      Channel.create(:name => args[0])
+      channel = Channel.create(:name => args[0])
+      channel.save
       @@channels = Channel.find(:all)
       @@bot.add_channel(args[0])
       return "Joined #{args[0]}"
