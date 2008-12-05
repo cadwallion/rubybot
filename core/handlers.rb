@@ -36,10 +36,11 @@ class IRCHandler
   def self.get_target(event)
     if event.channel =~ /#(.*)/
       # event was a channel message
-      event.channel
+      return event.from if ChannelModule.is_quiet?(event.channel)
+      return event.channel
     else
       # event was a private message
-      event.from
+      return event.from
     end
   end
   

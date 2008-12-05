@@ -4,5 +4,6 @@ CREATE TABLE 'channels' (
 	'password' VARCHAR(255) DEFAULT NULL,
 	'rupture' INTEGER(1) NOT NULL DEFAULT 0,
 	'youtube' INTEGER(1) NOT NULL DEFAULT 0
+	'quiet' INTEGER(1) NOT NULL DEFAULT 0
 );
 

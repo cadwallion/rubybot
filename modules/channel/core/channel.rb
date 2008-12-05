@@ -27,6 +27,45 @@ class ChannelModule
       return "You need to do that from inside a channel."
     end
   end
+
+  def self.quiet(args, event)
+    if event.channel =~ /^\#(.*)$/
+      if channel = Channel.find_by_name(event.channel)
+        if channel.quiet == 1
+          channel.quiet = 0
+          channel.save
+          return "Made #{event.channel} not quiet"
+          @@channels = Channel.find(:all)
+        else
+          channel.quiet = 1
+          channel.save
+          return "Made #{event.channel} quiet"
+          @@channels = Channel.find(:all)
+        end
+      else
+        return "Could not find channel"
+      end
+    else
+      return "You need to do that from inside a channel."
+    end
+  end
+
+  def self.is_quiet?(channel)
+    if channel =~ /^\#(.*)$/
+      if channel = Channel.find_by_name('#'+$1)
+        if channel.quiet == 1
+          return true
+        else
+          return false
+        end
+      else
+        return false
+      end
+    else
+      return false
+    end
+  end
+
   def self.give_ops(args, event)
     if event.channel =~ /^\#(.*)$/
       @@bot.op(event.channel, event.from)

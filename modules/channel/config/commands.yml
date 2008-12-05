@@ -31,3 +31,7 @@ channel:
     command: "ChannelModule.unban"
     admin: 1
     num_args: 1
+  quiet:
+    help: "Sets the channel as quiet, both will only reply by private messages."
+    command: "ChannelModule.quiet"
+    admin: 1
