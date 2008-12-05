@@ -72,7 +72,7 @@ pid = fork do
     end
 
     #after receiving the endofmotd message, start login events
-    IRCEvent.add_callback('endofmotd') do |event|
+    @logged_in = Proc.new do |event|
       # reset userlist
       @@userlist = nil
       @@userlist = {}
@@ -108,6 +108,8 @@ pid = fork do
       end
     end
 
+    IRCEvent.add_handler('endofmotd', @logged_in)
+    IRCEvent.add_handler('nomotd', @logged_in)
     IRCEvent.add_handler('whoreply', @who_reply_proc)
     IRCEvent.add_handler('join', @join_proc)
     IRCEvent.add_handler('part', @part_proc)
