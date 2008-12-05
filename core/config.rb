@@ -23,5 +23,4 @@ def setup_modules
   Dir['**/modules/*/core/*.rb'].each do |mod|
     load mod
   end
-  # load all channels into global @@channels
 end
