@@ -76,6 +76,10 @@ class IRCHandler
        @@bot.send_notice(event.from, "\001PING #{$1}\001")
     end
 
+    if event.message =~ Regexp.new("^\001VERSION\001$")
+       @@bot.send_notice(event.from, "\001VERSION RubyBot:1.0:Linux\001")
+    end
+
     #Youtube
     if event.message =~ /^http\:\/\/www\.?youtube\.com\/watch\?v\=([0-9a-zA-Z\-_]*)(\&.*)?/i # is event a youtube link?
     youtube_id = $1
