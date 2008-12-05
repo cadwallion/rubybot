@@ -30,19 +30,19 @@ class IRCEvent
       @event_type = 'ping'
     elsif @stats[1] && @stats[1].match(/^\d+$/)
       @event_type = EventLookup::find_by_number(@stats[1]);
-      @channel = @stats[3]
+      @channel = @stats[3].downcase unless @stats[3].nil?
     else
       @event_type = @stats[2].downcase if @stats[2]
     end
     
     if @event_type != 'ping'
-      @from    = @stats[0] 
+      @from    = @stats[0].downcase
       @user    = IRCUser.create_user(@from)
     end
     # FIXME: this list would probably be more accurate to exclude commands than to include them
     @hostmask = @stats[1] if %W(topic privmsg join).include? @event_type
-    @channel = @stats[3] if @stats[3] && !@channel
-    @target  = @stats[5] if @stats[5]
+    @channel = @stats[3].downcase if @stats[3] && !@channel
+    @target  = @stats[5].downcase if @stats[5]
     @mode    = @stats[4] if @stats[4]
 
     
@@ -50,7 +50,7 @@ class IRCEvent
     # Unfortunatly, not all messages are created equal. This is our
     # special exceptions section
     if @event_type == 'join'
-      @channel = @message
+      @channel = @message.downcase
     end
     
   end
