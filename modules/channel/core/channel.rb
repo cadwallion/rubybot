@@ -17,6 +17,7 @@ class ChannelModule
     if event.channel =~ /^\#(.*)$/
       if channel = Channel.find_by_name(event.channel)
         channel.destroy
+        channel.save
         @@channels = Channel.find(:all)
         @@bot.del_channel(event.channel)
         return "Left #{event.channel}"
