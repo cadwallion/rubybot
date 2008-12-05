@@ -31,6 +31,7 @@ class IRCEvent
     elsif @stats[1] && @stats[1].match(/^\d+$/)
       @event_type = EventLookup::find_by_number(@stats[1]);
       @channel = @stats[3].downcase unless @stats[3].nil?
+      @channel = @stats[3] if @stats[3].nil?
     else
       @event_type = @stats[2].downcase if @stats[2]
     end
