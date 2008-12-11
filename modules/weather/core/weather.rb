@@ -1,7 +1,7 @@
 class WeatherModule
   def self.convert_to_c(value)
     log_message value
-    if value =~ /^[0-9]*$/
+    if value =~ /^[\-0-9]*$/
       ( value.to_i - 32 ) * 5 / 9
     else
       "N/A"
