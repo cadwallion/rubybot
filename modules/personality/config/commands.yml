@@ -1,0 +1,4 @@
+botsnack:
+  help: "Give a botsnack. The syntax is '@botsnack'"
+  out: "Thank You! :)"
+
