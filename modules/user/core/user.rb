@@ -12,6 +12,16 @@ class UserModule
     end
     return "That user already exists"
   end
+  def self.delete_user(args, event)
+    args = args.split
+    nickname = args[0].downcase
+    if user = User.find_by_nickname(nickname)
+      user.destroy
+      generate_hostmasks
+      return "#{nickname} deleted"
+    end
+    return "That user doesn't exists"
+  end
   def self.reload_hostmasks(args, event)
     UserModule.generate_hostmasks
     return "Reloaded users."
@@ -32,10 +42,12 @@ class UserModule
     return false
   end
   def self.create_user(event)
-    unless user = get_user(event)
+    user = get_user(event)
+    if user == false
       hostmask = get_hostmask_for_nick(event.from)
-      user = User.create(:nickname => event.from)
-      user.hosts.create(:hostmask => hostmask)
+      return "Error creating user, please try again in a moment." if hostmask == false
+      user = User.create!(:nickname => event.from)
+      user.hosts.create!(:hostmask => hostmask)
       generate_hostmasks
     end
     return user
@@ -56,7 +68,9 @@ class UserModule
   end
   def self.get_hostmask(args, event)
     nick = args.split[0].downcase
-    hostname = get_nick(nick)[:hostname]
+    nick = get_nick(nick)
+    return "Could not get user information, trying to reget your user info, please try again" if nick == false or nick == "" or nick.nil?
+    hostname = nick[:hostname]
     return make_hostmask(hostname) unless hostname == false or hostname.nil? or hostname == ""
     return "Error generating hostmast for user #{nick}"
   end
@@ -91,7 +105,9 @@ class UserModule
   end
   def self.get_hostmask_for_nick(nick)
     nick = nick.split[0].downcase
-    hostname = get_nick(nick)[:hostname]
+    nick = get_nick(nick)
+    return false if nick == false or nick == "" or nick.nil?
+    hostname = nick[:hostname]
     return make_hostmask(hostname) unless hostname == false or hostname.nil? or hostname == ""
     return false
   end

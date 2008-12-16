@@ -13,7 +13,7 @@ def logger
 end
 
 def log_error(err)
-  logger.debug "[#{logtime}] #{err.message} at #{err.backtrace.first}"
+  logger.debug "[#{logtime}] #{err.message} at #{err.backtrace.inspect}"
 end
 
 def log_message(message)

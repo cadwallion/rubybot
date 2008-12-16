@@ -5,6 +5,11 @@ user:
     admin: 1
     command: 'UserModule.add_user'
     num_args: 1
+  delete:
+    help: "Delete a user.  The format for @user delete is '@user delete <target>'."
+    admin: 1
+    command: 'UserModule.delete_user'
+    num_args: 1
   hostmask:
     help: "Shows what we would add a nick's hostmask as.  The format for @user hostmask is '@user hostmask <target>'."
     command: 'UserModule.get_hostmask'
