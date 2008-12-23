@@ -29,8 +29,8 @@ class UserModule
 
   ## UTILITY COMMANDS ##
   def self.get_hostmasks(event)
-    log_message(@@hostmasks.inspect)
     hostmasks = @@hostmasks.select {|k,v| compare_hostmask(event.hostmask, k)}
+    log_message(hostmasks)
     return hostmasks
   end
   def self.get_user(event)
@@ -75,7 +75,6 @@ class UserModule
     return "Error generating hostmast for user #{nick}"
   end
   def self.make_hostmask(hostname)
-    log_message("Generating hostmask for #{hostname}")
     user = hostname.split('@', 2)[0]
     host = hostname.split('@', 2)[1]
     if host =~ /^(?:\d{1,3}\.){3}\d{1,3}$/

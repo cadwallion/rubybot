@@ -1,6 +1,5 @@
 class WeatherModule
   def self.convert_to_c(value)
-    log_message value
     if value =~ /^[\-0-9]*$/
       ( value.to_i - 32 ) * 5 / 9
     else
@@ -117,6 +116,7 @@ class WeatherModule
   def self.weather_report(args, event)
     args = args.split
     user = UserModule.get_user(event)
+    log_message(user.inspect) unless user.nil?
     if args.size == 0 and (user == false or user.nil? or user.location.nil?)
       "City code or zip code is required or city information must be saved."
     elsif args.size != 0
@@ -132,6 +132,7 @@ class WeatherModule
   def self.weather_forecast(args, event)
     args = args.split
     user = UserModule.get_user(event)
+    log_message(user.inspect) unless user.nil?
     if args.size == 0 and (user == false or user.nil? or user.location.nil?)
       "City code or zip code is required or city information must be saved."
     elsif args.size != 0
@@ -150,12 +151,8 @@ class WeatherModule
       user.update_attributes('location' => args)
       if user.save
         UserModule.generate_hostmasks
-        log_message(user.inspect)
         return "Saved location"
       else
-        log_message(user.inspect)
-        log_message(user.hosts.inspect)
-        log_message(user.errors.inspect)
         return "Error updating"
       end
     else
