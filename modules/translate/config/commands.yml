@@ -1,0 +1,6 @@
+translate:
+  help: "Translator"
+  command: "TranslateModule.translate"
+garble:
+  help: "Garble some text"
+  command: "TranslateModule.garble"
