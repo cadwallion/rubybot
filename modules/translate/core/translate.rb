@@ -1,6 +1,6 @@
 class TranslateModule
   def self.garble(args, event)
-    num = rand(4) + 2
+    num = rand(6) + 4
     last = "en"
     last_result = args
     langs = []

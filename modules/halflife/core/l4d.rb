@@ -1,4 +1,4 @@
-class L4d
+class L4dModule
   def self.player_count(args, event)
     url = "http://server.tecnobrat.com/cacti/scripts/query.php"
     file = Net::HTTP.get_response URI.parse(url)

@@ -1,3 +1,3 @@
 l4d:
   help: "Left 4 Dead server player count. The format for @l4d is '@l4d'."
-  command: "L4d.player_count"
+  command: "L4dModule.player_count"
