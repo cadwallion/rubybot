@@ -1,11 +1,11 @@
 armory:
   help: "Armory link generator. The format for @armory is '@armory <us/eu> <realm name> <character name>'."
-  regex: '^(us|eu|US|EU) (.*) (.*)$'
+  regex: '^(us|eu|kr|cn) (.*) (.*)$'
   command: "ArmoryModule.armory_link"
   num_args: 3
 char:  
   help: "Armory Character Stats displayer. The format for @char is '@char <us/eu> <realm name> <character name>'."
-  regex: '^(us|eu|US|EU) (.*) (.*)$'
+  regex: '^(us|eu|kr|cn) (.*) (.*)$'
   command: "ArmoryModule.char_info"
   num_args: 3
 ap:
@@ -20,7 +20,7 @@ buffinfo:
   num_args: 3
 realmstatus:
   help: "Shows realm up/down status.  The format for @realmstatus is '@realmstatus <us/eu> [optional server name]'."
-  regex: '^(us|eu|US|EU)(.*)'
+  regex: '^(us|eu)(.*)'
   command: "Wow.realmstatus"
   num_args: 1
 

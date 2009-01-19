@@ -153,7 +153,7 @@ class IRCHandler
       if command['admin'] == 1
         return ["You need to be an admin.", "notice"] unless UserModule.is_admin?(event)
       end
-      if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'])))
+      if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'], true)))
         unless command['help'].nil?
           return ["An error has occurred, check format. " + command['help'], "notice"]
         else

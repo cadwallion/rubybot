@@ -8,7 +8,9 @@ class SystemModule
   end
 
   def self.kill_bot(args, event)
-    @@bot.send_quit
+#send_quit(); IRCConnection.quit
+    IRCConnection.send_to_server("QUIT :*Gets a gun* ... BAM!")
+    IRCConnection.quit
     exit
     return ""
   end
