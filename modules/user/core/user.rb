@@ -55,7 +55,8 @@ class UserModule
   def self.is_admin?(event)
     if hostmasks = get_hostmasks(event)
       hostmasks.each do |hostmask|
-        if hostmask[1]['admin'] == 1
+        log_message(hostmask.inspect)
+        if hostmask[1][:admin] == 1
           return true
         end
       end
