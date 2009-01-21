@@ -121,7 +121,7 @@ class ChannelModule
     end
   end
   def self.reload_channels
-    channels = Channel.find(:all)
+    channels = Channel.all
     @@channels = nil
     @@channels = {}
     channels.each do |channel|

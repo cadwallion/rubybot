@@ -114,7 +114,7 @@ class UserModule
     # load all users into global @@hostmasks
     @@hostmasks = nil
     @@hostmasks = {}
-    users = User.find(:all, :include => [:hosts])
+    users = User.eager(:hosts).all
     users.each do |user|
       user.hosts.each do |host|
         @@hostmasks[host.hostmask] = user

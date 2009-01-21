@@ -1,3 +1,3 @@
-class Host < ActiveRecord::Base
+class Host < Sequel::Model
   belongs_to :user
 end

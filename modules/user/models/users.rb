@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < Sequel::Model
   has_many :hosts, :dependent => :destroy
   validates_uniqueness_of :nickname
   def before_save

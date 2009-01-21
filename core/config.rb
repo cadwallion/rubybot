@@ -6,7 +6,7 @@ def setup_config
   end
 
   # load all config vars into global @@c var
-  configs = Conf.find(:all)
+  configs = Conf.all
   @@c = {}
   configs.each do |config|
     @@c[config.config_name] = config.config_value

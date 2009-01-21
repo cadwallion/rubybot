@@ -16,11 +16,11 @@ class WeatherModule
         weather = (REXML::Document.new xmldoc).root
         if weather.elements['/weather/cc'] then
           current = "Location: #{weather.elements['/weather/loc/dnam'].text} - Updated at: #{weather.elements['/weather/cc/lsup'].text} - Temp: #{weather.elements['/weather/cc/tmp'].text}F (#{convert_to_c(weather.elements['/weather/cc/tmp'].text)}C) - Feels like: #{weather.elements['/weather/cc/flik'].text}F (#{convert_to_c(weather.elements['/weather/cc/flik'].text)}C) - Wind: #{weather.elements['/weather/cc/wind/t'].text} #{weather.elements['/weather/cc/wind/s'].text} MPH - Conditions: #{weather.elements['/weather/cc/t'].text}"
-          CACHE.set("current_"+citycode, current, 30.minutes)
+          CACHE.set("current_"+citycode, current, 30*60)
           current
         else
           current = "City code not found."
-          CACHE.set("current_"+citycode, current, 30.minutes)
+          CACHE.set("current_"+citycode, current, 30*60)
           current
         end
       else
@@ -54,11 +54,11 @@ class WeatherModule
                 end
               end
             end
-            CACHE.set("forecast_"+citycode, forecast, 30.minutes) 
+            CACHE.set("forecast_"+citycode, forecast, 30*60) 
             forecast
           else
             forecast = "City code not found."
-            CACHE.set("forecast_"+citycode, forecast, 2.hours) 
+            CACHE.set("forecast_"+citycode, forecast, 2*60*60) 
             forecast
           end
       else
