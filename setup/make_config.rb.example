@@ -1,49 +1,27 @@
 #!/usr/bin/env ruby
 
-#require active record
+#require sequel
 require 'rubygems'
-require 'active_record'
+require 'sequel'
 
 #setup database
 require 'core/database.rb'
 
+#setup logging
+require 'core/logging.rb'
+
+#load config
 load 'core/config.rb'
 
-#setup
+#setup models and config
 setup_models
 setup_config
 
-#Bot user details
-Conf.create(:config_name => 'nickname', :config_value => 'NickName')
-Conf.create(:config_name => 'realname', :config_value => 'My Name')
-Conf.create(:config_name => 'nickserv_pass', :config_value => 'password') #optional
-
-#Connection details
-Conf.create(:config_name => 'server_address', :config_value => 'irc.freenode.net')
-Conf.create(:config_name => 'server_port', :config_value => '6667')
-Conf.create(:config_name => 'bindip', :config_value => '') #optional
-
-#Bot settings
-Conf.create(:config_name => 'command_char', :config_value => '@')
-
-#Memcache settings
-Conf.create(:config_name => 'memcache_host', :config_value => 'localhost')
-Conf.create(:config_name => 'memcache_port', :config_value => '11211')
-Conf.create(:config_name => 'memcache_namespace', :config_value => 'rubybot')
-
-#Weather module settings
-Conf.create(:config_name => 'weather_par', :config_value => '')
-Conf.create(:config_name => 'weather_api', :config_value => '')
-
-#Pownce module settings
-Conf.create(:config_name => 'pownce_api_key', :config_value => '')
-Conf.create(:config_name => 'pownce_api_secret', :config_value => '')
-
 #Add user
-user = User.create(:nickname => 'AdminNick', :admin => 1)
-user.hosts.create(:hostmask => 'i=admin@host.com')
+user = User.create(:nickname => 'adminnick', :admin => 1)
+user.add_host(Host.create(:hostmask => '*admin@host.com'))
+user.password = 'password'
+user.save
 
 #Add channels
 Channel.create(:name => '#channel')
-Channel.create(:name => '#anotherchannel')
-

@@ -6,10 +6,9 @@ def setup_config
   end
 
   # load all config vars into global @@c var
-  configs = Conf.all
   @@c = {}
-  configs.each do |config|
-    @@c[config.config_name] = config.config_value
+  Dir['config/*.yml'].each do |config|
+    @@c.merge! YAML::load(File.open(config))
   end
 end
 
