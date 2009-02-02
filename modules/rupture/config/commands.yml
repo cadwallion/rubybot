@@ -1,9 +1,0 @@
-rupture:
-  help: "The format for @rupture is '@rupture save <id>'"
-  save:
-    help: "The format for @rupture is '@rupture save <id>'"
-    num_args: 1
-    command: "RuptureModule.set_rupture"
-loop:
-  help: "The format for @loop is '@loop'."
-  command: "RuptureModule.check_loop"

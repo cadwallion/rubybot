@@ -1,129 +1,171 @@
 class UserModule
-  ## IRC COMMAND HANDLERS ##
-  def self.add_user(args, event)
-    args = args.split
-    nickname = args[0].downcase
-    unless User.find_by_nickname(nickname)
-      hostmask = get_hostmask_for_nick(nickname)
-      user = User.create(:nickname => nickname)
-      user.hosts.create(:hostmask => hostmask)
-      generate_hostmasks
-      return "#{nickname} created with hostmask #{hostmask}"
-    end
-    return "That user already exists"
-  end
-  def self.delete_user(args, event)
-    args = args.split
-    nickname = args[0].downcase
-    if user = User.find_by_nickname(nickname)
-      user.destroy
-      generate_hostmasks
-      return "#{nickname} deleted"
-    end
-    return "That user doesn't exists"
-  end
-  def self.reload_hostmasks(args, event)
-    UserModule.generate_hostmasks
-    return "Reloaded users."
-  end
+	
+	##########################
+	## IRC COMMAND HANDLERS ##
+	##########################
 
-  ## UTILITY COMMANDS ##
-  def self.get_hostmasks(event)
-    hostmasks = @@hostmasks.select {|k,v| compare_hostmask(event.hostmask, k)}
-    log_message(hostmasks)
-    return hostmasks
-  end
-  def self.get_user(event)
-    if hostmasks = get_hostmasks(event)
-      hostmasks.each do |hostmask|
-        return hostmask[1]
-      end
-    end
-    return false
-  end
-  def self.create_user(event)
-    user = get_user(event)
-    if user == false
-      hostmask = get_hostmask_for_nick(event.from)
-      return "Error creating user, please try again in a moment." if hostmask == false
-      user = User.create!(:nickname => event.from)
-      user.hosts.create!(:hostmask => hostmask)
-      generate_hostmasks
-    end
-    return user
-  end
-  def self.is_admin?(event)
-    if hostmasks = get_hostmasks(event)
-      hostmasks.each do |hostmask|
-        log_message(hostmask.inspect)
-        if hostmask[1][:admin] == 1
-          return true
-        end
-      end
-    end
-    return false
-  end
+	def self.add_user(args, event)
+		args = args.split
+		nickname = args[0].downcase
+		password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{nickname}--")[0,6]
+		unless User.find_by_nickname(nickname)
+			hostmask = make_hostmask(IRC::Utils.get_channel_user_from_event(event, nickname).hostmask)
+			user = User.create(:nickname => nickname)
+			user.add_host(Host.create(:hostmask => hostmask))
+			user.password = password
+			user.save
+			event.connection.send_notice(nickname, "User account for '#{nickname}' has been created with password '#{password}'")
+			return "#{nickname} created with hostmask #{hostmask}"
+		end
+		return "That user already exists"
+	end
 
-  def self.compare_hostmask(usermask, wildcardmask)
-    return IRCUtil.assert_hostmask(usermask, wildcardmask)
-  end
-  def self.get_hostmask(args, event)
-    nick = args.split[0].downcase
-    nick = get_nick(nick)
-    return "Could not get user information, trying to reget your user info, please try again" if nick == false or nick == "" or nick.nil?
-    hostname = nick[:hostname]
-    return make_hostmask(hostname) unless hostname == false or hostname.nil? or hostname == ""
-    return "Error generating hostmast for user #{nick}"
-  end
-  def self.make_hostmask(hostname)
-    user = hostname.split('@', 2)[0]
-    host = hostname.split('@', 2)[1]
-    if host =~ /^(?:\d{1,3}\.){3}\d{1,3}$/
-      hostsplit = host.split('.')
-      host = "#{hostsplit[0]}.#{hostsplit[1]}.#{hostsplit[2]}.*"
-    elsif host =~ /^.*(\..*\..*)$/
-      host = "*#{$1}"
-    end
-    if user =~ /^(n|i)\=(.*)$/
-      user = "#{$2}"
-    elsif user =~ /^\~(.*)$/
-      user = "#{$1}"
-    end
-    return "*#{user}@#{host}"
-  end
-  # save user to userlist global variable and 
-  def self.save_nick(nick, hostname)
-    nick = nick.downcase
-    @@userlist = @@userlist.merge({nick => {:hostname => hostname}})
-    return @@userlist[nick]
-  end
-  def self.get_nick(nick)
-    nick = nick.downcase
-    return @@userlist[nick] unless @@userlist[nick].nil?
-    @@bot.get_user_info(nick)
-    return false
-  end
-  def self.get_hostmask_for_nick(nick)
-    nick = nick.split[0].downcase
-    nick = get_nick(nick)
-    return false if nick == false or nick == "" or nick.nil?
-    hostname = nick[:hostname]
-    return make_hostmask(hostname) unless hostname == false or hostname.nil? or hostname == ""
-    return false
-  end
-  def self.generate_hostmasks
-    # load all users into global @@hostmasks
-    @@hostmasks = nil
-    @@hostmasks = {}
-    users = User.eager(:hosts).all
-    users.each do |user|
-      user.hosts.each do |host|
-        @@hostmasks[host.hostmask] = user
-      end
-    end
-  end
+	def self.delete_user(args, event)
+		args = args.split
+		nickname = args[0].downcase
+		if user = User.find_by_nickname(nickname)
+			user.destroy
+			return "#{nickname} deleted"
+		end
+		return "That user doesn't exists"
+	end
+	
+	def self.get_hostmask(args, event)
+		hostmask = get_hostmask_for_nick(args.split[0].downcase, event)
+		return "Hostmask for this user is #{hostmask}" unless hostmask == false or hostmask.nil? or hostmask == ""
+		return "Error generating hostmast for user #{nick}"
+	end
+
+	def self.set_password(args, event)
+		if event.channel.downcase == event.connection.nickname.downcase
+			channel_user = IRC::Utils.get_channel_user_from_event(event)
+			if channel_user.logged_in?
+				user = channel_user.user_data
+				return "Something went wrong" if user.nil?
+				user.password = args
+				user.save
+				return "Updated password"
+			end
+			return "You must be logged in to change your password"
+		else
+			return "You must private message the bot to change your password.  /msg #{event.connection.nickname} #{event.connection.command_char}user password"
+		end
+	end
+
+	def self.register(args, event)
+		create_user(event)
+		return "User created"
+	end
+	
+	def self.login(args, event)
+		if event.channel.downcase == event.connection.nickname.downcase
+			args = args.split
+			channel_user = IRC::Utils.get_channel_user_from_event(event)
+			user = User.find(:nickname => args[0].downcase, :password => args[1])
+			unless user.nil?
+				channel_user.logged_in = true
+				channel_user.user_data = user
+				return "User logged in"
+			else
+				return "Could not log you in"
+			end
+		else
+			return "You must private message the bot to login.  /msg #{event.connection.nickname} #{event.connection.command_char}login"
+		end
+	end
+
+	def self.logout(args, event)
+		channel_user = IRC::Utils.get_channel_user_from_event(event)
+		if channel_user.logged_in?
+			channel_user.logged_in = false
+			channel_user.user_data = nil
+			return "Logged out"
+		else
+			return "You are not logged in"
+		end
+	end
+	
+	def self.add_host(args, event)
+		channel_user = IRC::Utils.get_channel_user_from_event(event)
+		if channel_user.logged_in?
+			user = channel_user.user_data
+			user.add_host(Host.create(:hostmask => make_hostmask(channel_user.hostmask)))
+			return "Added hostmask"
+		end
+		return "You must be logged in to change your password"
+	end
+
+	######################
+	## UTILITY COMMANDS ##
+	######################
+
+	def self.create_user(event)
+		user = get_user(event)
+		if user.nil?
+			hostmask = make_hostmask(IRC::Utils.get_channel_user_from_event(event).hostmask)
+			password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{event.from.downcase}--")[0,6]
+			user = User.create(:nickname => event.from.downcase)
+			user.add_host(Host.create(:hostmask => hostmask))
+			user.password = password
+			event.connection.send_notice(event.from.downcase, "User account for '#{event.from.downcase}' has been created with password '#{password}'")
+		end
+		return user
+	end
+	
+	def self.get_user(event)
+		users = get_users(event)
+		logger.debug(users.inspect)
+		return users.first unless users.nil? or users.size == 0
+		return false
+	end
+
+	def self.get_users(event)
+		channel_user = IRC::Utils.get_channel_user_from_event(event)
+		logger.debug(channel_user)
+		if channel_user.user_data.nil?
+			users = Array.new
+			hosts = Host.all.select { |obj| compare_hostmask(channel_user.hostmask, obj.hostmask) }
+			hosts.each do |host|
+				users << host.user
+			end
+		else
+			users = Array.new
+			users << channel_user.user_data
+		end
+		return users unless users.nil?
+	end
+
+	def self.is_admin?(event)
+		user = IRC::Utils.get_channel_user_from_event(event)
+		return true if user.logged_in? and user.user_data.admin == 1
+		return false
+	end
+
+	def self.compare_hostmask(usermask, wildcardmask)
+		return !!usermask.match(IRC::Utils.regex_mask(wildcardmask))
+	end
+	
+	def self.make_hostmask(hostname)
+		user = hostname.split('@', 2)[0]
+		host = hostname.split('@', 2)[1]
+		if host =~ /^(?:\d{1,3}\.){3}\d{1,3}$/
+			hostsplit = host.split('.')
+			host = "#{hostsplit[0]}.#{hostsplit[1]}.#{hostsplit[2]}.*"
+		elsif host =~ /^.*(\..*\..*)$/
+			host = "*#{$1}"
+		end
+		if user =~ /^(n|i)\=(.*)$/
+			user = "#{$2}"
+		elsif user =~ /^\~(.*)$/
+			user = "#{$1}"
+		end
+		return "\*#{user}@#{host}"
+	end
+	
+	def self.get_hostmask_for_nick(nick, event)
+		nick = nick.downcase
+		hostmask = IRC::Utils.get_channel_user_from_event(event, nick).hostmask
+		return make_hostmask(hostmask) unless hostmask == false or hostmask.nil? or hostmask == ""
+		return false
+	end
 end
-
-@@hostmasks = nil
-@@hostmasks = {}
-UserModule.generate_hostmasks

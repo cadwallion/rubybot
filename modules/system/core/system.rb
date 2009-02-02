@@ -1,5 +1,7 @@
 class SystemModule
   def self.reload_bot(args, event)
+    event.connection.setup.reset_startup_handlers
+    event.connection.setup.default_handlers
     load 'core/handlers.rb'
     setup_models
     setup_config
@@ -8,10 +10,7 @@ class SystemModule
   end
 
   def self.kill_bot(args, event)
-#send_quit(); IRCConnection.quit
-    IRCConnection.send_to_server("QUIT :*Gets a gun* ... BAM!")
-    IRCConnection.quit
-    exit
+    event.connection.quit("QUIT :*Gets a gun* ... BAM!")
     return ""
   end
 

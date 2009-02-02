@@ -1,5 +1,4 @@
 user:
-  help: 'User help'
   add:
     help: "Adds a user.  The format for @user add is '@user add <target>'."
     admin: 1
@@ -15,6 +14,20 @@ user:
     command: 'UserModule.get_hostmask'
     admin: 1
     num_args: 1
-  reload:
-    help: "Reloads user database."
-    command: 'UserModule.reload_hostmasks'
+  password:
+    help: "Sets your password, requires to be logged in.  The format for @user password is '@user password <password>'"
+    command: 'UserModule.set_password'
+    num_args: 1
+  register:
+    help: "Registers your user.  The format for @user register is '@user register'"
+    command: 'UserModule.register'
+  addhost:
+    help: "Adds your hostmask to your account.  The format for @user addhost is '@user addhost'"
+    command: 'UserModule.add_host'
+login:
+  help: "Logs into your account.  The format for @login is '@login <username> <password>'"
+  command: 'UserModule.login'
+  num_args: 2
+logout:
+  help: "Log out of your account.  The format for @logout is '@logout'"
+  command: 'UserModule.logout'
