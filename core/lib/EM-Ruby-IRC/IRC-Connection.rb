@@ -2,8 +2,8 @@ require 'logger'
 
 module IRC	
 	class Connection < EventMachine::Connection
-		attr_reader :nickname, :realname, :username, :channels, :users, :name, :command_char
-		attr_accessor :irc_handlers, :channels, :users, :setup
+		attr_reader :realname, :username, :channels, :users, :name, :command_char
+		attr_accessor :irc_handlers, :channels, :users, :setup, :nickname
 	
 		def initialize(args)
 			begin
@@ -92,13 +92,13 @@ module IRC
 			send_to_server("QUIT :#{message}")
 		end
 		
-	  def action(target, message)
-	    send_ctcp(target, 'ACTION', action);
-	  end
-                  
-	  def ctcp(target, type, message)
-	    send_to_server("PRIVMSG #{target} :\001#{type} #{message}");
-	  end
+		def action(target, message)
+			send_ctcp(target, 'ACTION', action);
+		end
+				  
+		def ctcp(target, type, message)
+			send_to_server("PRIVMSG #{target} :\001#{type} #{message}");
+		end
 		
 		def kick(channel, target, message="Bye!")
 			send_to_server("KICK #{channel} #{target} :#{message}")

@@ -1,4 +1,5 @@
-@@startup_handlers = Array.new()
+# This hash is used to store all of the connections, its the only global var set by the library
+@@connections = Hash.new
 
 require 'eventmachine'
 require 'core/lib/EM-Ruby-IRC/IRC-Connection.rb'

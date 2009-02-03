@@ -1,6 +1,8 @@
 module IRC
 	class Setup
 		def default_handlers
+			logger.debug("Starting default handlers")
+			begin
 			@default_join_handler = Proc.new do |event|
 				begin
 					#Issues a who command on the channel when I join so I can generate the users hostnames
@@ -42,12 +44,29 @@ module IRC
 					log_error(err)
 				end
 			end
+			
+			@default_nick_in_use_handler = Proc.new do |event|
+				begin
+					logger.debug("OMG NICKNAME IS BEING USED!")
+					new_nickname = event.connection.nickname[0,14] + rand(9).to_s
+					event.connection.send_to_server "NICK #{new_nickname}"
+					event.connection.send_to_server "USER #{event.connection.username} 8 * :#{event.connection.realname}"
+					event.connection.nickname = new_nickname
+				rescue => err
+					log_error(err)
+				end
+			end
 
-			IRC::Utils.add_handler('join', @default_join_handler)
-			IRC::Utils.add_handler('namreply', @default_names_reply_handler)
-			IRC::Utils.add_handler('part', @default_part_handler)
-			IRC::Utils.add_handler('whoreply', @default_who_reply_handler)
-			IRC::Utils.add_handler('ping', lambda {|event| bot.send_to_server("PONG #{event.message}") })
+			logger.debug("Registering handlers")
+			IRC::Utils.add_handler('join', @default_join_handler, self)
+			IRC::Utils.add_handler('namreply', @default_names_reply_handler, self)
+			IRC::Utils.add_handler('part', @default_part_handler, self)
+			IRC::Utils.add_handler('whoreply', @default_who_reply_handler, self)
+			IRC::Utils.add_handler('nicknameinuse', @default_nick_in_use_handler, self)
+			IRC::Utils.add_handler('ping', lambda {|event| event.connection.send_to_server("PONG #{event.message}") }, self)
+			rescue => err
+				log_error(err)
+			end
 		end
 	end
 end

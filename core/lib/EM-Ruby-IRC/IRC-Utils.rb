@@ -1,5 +1,3 @@
-@@connections = Hash.new
-
 module IRC
 	class Utils
 		#Adds the channel to the global channel list (IRC::Connection#channels) and then returns it
@@ -116,8 +114,7 @@ module IRC
 					})
 				end
 			else
-				@@connections[network].add_startup_handler(lambda {|bot|
-					bot.add_message_handler(eventname, proc)
+				network.add_startup_handler(lambda {|bot|
 					bot.add_message_handler(eventname, proc)
 				})
 			end

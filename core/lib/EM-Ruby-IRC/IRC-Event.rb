@@ -48,6 +48,7 @@ module IRC
 					run_handlers(@event_type) unless @event_type.nil?
 				end
 			end
+			#logger.debug(data)
 		end
 	
 		def run_handlers(event_type)
