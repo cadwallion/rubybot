@@ -116,25 +116,24 @@ class ChannelModule
 			return "Could not find user, try again in a few moments"
 		end
 	end
-end
-
-@join_channels = Proc.new do |event|
-	begin
-	Channel.all.each do |channel|
-		if channel.password.nil?
-			event.connection.join(channel.name)
-		else              
-			event.connection.join("#{channel.name} #{channel.password}")
+	
+	def self.join_channels_handler
+		Proc.new do |event|
+			begin
+			Channel.all.each do |channel|
+				if channel.password.nil?
+					event.connection.join(channel.name)
+				else              
+					event.connection.join("#{channel.name} #{channel.password}")
+				end
+			end  
+			rescue => err
+				log_error(err)
+			end
 		end
-	end  
-	rescue => err
-		log_error(err)
 	end
 end
 
-@@connections.each do |name, connection|
-	connection.add_startup_handler(lambda {|bot|
-		bot.add_message_handler('endofmotd', @join_channels)
-		bot.add_message_handler('nomotd', @join_channels)
-	})
-end
+
+IRC::Utils.add_hander('endofmotd', ChannelModule.join_channels_handler)
+IRC::Utils.add_hander('nomotd', ChannelModule.join_channels_handler)

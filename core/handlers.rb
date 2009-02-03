@@ -1,12 +1,3 @@
-# initialization of event handler
-@message_proc = Proc.new do |event|
-	begin
-		IRCHandler.message(event)
-	rescue => err
-		log_error(err)
-	end
-end
-
 class IRCHandler
 	# determines if the command came from a PM or channel
 	def self.get_target(event)
@@ -21,21 +12,23 @@ class IRCHandler
 	end
 	
 	# initial response block from the event handler
-	def self.message(event)
-		begin
-			# finds the event target
-			target = get_target(event)
-			# finds the event originator
-			from_nick = event.from
-			# gets the hostmask
-			from_hostmask = event.hostmask
-			# validates that event is a bot command.  check based on COMMAND_CHAR regex
-			if event.message =~ Regexp.new("^#{event.connection.command_char}(.*)", true)
-				# valid bot command, send to processor
-				self.process_message(event)
+	def self.message_handler
+		Proc.new do |event|
+			begin
+				# finds the event target
+				target = get_target(event)
+				# finds the event originator
+				from_nick = event.from
+				# gets the hostmask
+				from_hostmask = event.hostmask
+				# validates that event is a bot command.  check based on COMMAND_CHAR regex
+				if event.message =~ Regexp.new("^#{event.connection.command_char}(.*)", true)
+					# valid bot command, send to processor
+					self.process_message(event)
+				end
+			rescue => err
+				log_error(err)
 			end
-		rescue => err
-			log_error(err)
 		end
 	end
 
@@ -131,8 +124,4 @@ class IRCHandler
 	end
 end
 
-@@connections.each do |name, connection|
-	connection.add_startup_handler(lambda {|bot|
-		bot.add_message_handler('privmsg', @message_proc)
-	})
-end
+IRC::Utils.add_hander('privmsg', IRCHandler.message_handler)

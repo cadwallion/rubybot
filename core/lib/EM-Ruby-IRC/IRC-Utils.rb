@@ -1,3 +1,5 @@
+@@connections = Hash.new
+
 module IRC
 	class Utils
 		#Adds the channel to the global channel list (IRC::Connection#channels) and then returns it
@@ -49,6 +51,7 @@ module IRC
 			return user
 		end
 		
+		#Returns a user from an event.
 		def self.get_channel_user_from_event(event, user=nil)
 			if user.nil?
 				channel_user(event.connection, event.channel, event.from)
@@ -84,6 +87,40 @@ module IRC
 		#Converts a hostmask like *brian@*.google.com to .*brian@.*google.com so it can be properly used in a regex
 		def self.regex_mask(hostmask)
 			hostmask.gsub(/([\[\]\(\)\?\^\$])\\/, '\\1').gsub(/\./, '\.').gsub(/\[/, '\[').gsub(/\]/, '\]').gsub(/\*/, '.*').sub(/^/, '^').sub(/$/, '$')
+		end
+		
+		#Sets up all connections into global @@connections
+		def self.setup_connections(config)
+			config.each do |network, server_setup|
+				@@connections[network] = IRC::Setup.new(network, server_setup)
+			end
+		end
+		
+		#Connects to all (or a specific) servers
+		def self.connect(network=nil)
+			if network.nil?
+				@@connections.each do |name, connection|
+					connection.connect
+				end
+			else
+				@@connections[network].connect
+			end
+		end
+		
+		#Adds a handler for an irc event
+		def self.add_hander(eventname, proc, network=nil)
+			if network.nil?
+				@@connections.each do |name, connection|
+					connection.add_startup_handler(lambda {|bot|
+						bot.add_message_handler(eventname, proc)
+					})
+				end
+			else
+				@@connections[network].add_startup_handler(lambda {|bot|
+					bot.add_message_handler(eventname, proc)
+					bot.add_message_handler(eventname, proc)
+				})
+			end
 		end
 	end
 end

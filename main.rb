@@ -39,10 +39,7 @@ require 'core/config.rb'
 #setup config
 setup_config
 
-@@connections = Hash.new
-@@c.each do |network, server_setup|
-	@@connections[network] = IRC::Setup.new(network, server_setup)
-end
+IRC::Utils.setup_connections(@@c)
 
 #setup models from modules
 setup_models
@@ -57,6 +54,4 @@ load 'core/handlers.rb' # TODO: Re-enable handlers
 
 setup_modules
 
-@@connections.each do |name, connection|
-	connection.connect
-end
+IRC::Utils.connect
