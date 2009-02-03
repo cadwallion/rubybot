@@ -1,3 +1,5 @@
+require 'digest/sha1'
+
 class UserModule
 	
 	##########################
@@ -100,28 +102,31 @@ class UserModule
 	######################
 
 	def self.create_user(event)
+		begin
 		user = get_user(event)
-		if user.nil?
+		if user.nil? or user == false
 			hostmask = make_hostmask(IRC::Utils.get_channel_user_from_event(event).hostmask)
 			password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{event.from.downcase}--")[0,6]
 			user = User.create(:nickname => event.from.downcase)
 			user.add_host(Host.create(:hostmask => hostmask))
 			user.password = password
+			user.save
 			event.connection.send_notice(event.from.downcase, "User account for '#{event.from.downcase}' has been created with password '#{password}'")
 		end
 		return user
+		rescue => err
+		log_error(err)
+		end
 	end
 	
 	def self.get_user(event)
 		users = get_users(event)
-		logger.debug(users.inspect)
 		return users.first unless users.nil? or users.size == 0
 		return false
 	end
 
 	def self.get_users(event)
 		channel_user = IRC::Utils.get_channel_user_from_event(event)
-		logger.debug(channel_user)
 		if channel_user.user_data.nil?
 			users = Array.new
 			hosts = Host.all.select { |obj| compare_hostmask(channel_user.hostmask, obj.hostmask) }
