@@ -124,4 +124,4 @@ class IRCHandler
 	end
 end
 
-IRC::Utils.add_hander('privmsg', IRCHandler.message_handler)
+IRC::Utils.add_handler('privmsg', IRCHandler.message_handler)

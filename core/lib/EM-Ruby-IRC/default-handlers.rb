@@ -43,13 +43,11 @@ module IRC
 				end
 			end
 
-			self.add_startup_handler(lambda {|bot|
-				bot.add_message_handler('join', @default_join_handler)
-				bot.add_message_handler('ping', lambda {|event| bot.send_to_server("PONG #{event.message}") })
-				bot.add_message_handler('namreply', @default_names_reply_handler)
-				bot.add_message_handler('part', @default_part_handler)
-				bot.add_message_handler('whoreply', @default_who_reply_handler)
-			})
+			IRC::Utils.add_handler('join', @default_join_handler)
+			IRC::Utils.add_handler('namreply', @default_names_reply_handler)
+			IRC::Utils.add_handler('part', @default_part_handler)
+			IRC::Utils.add_handler('whoreply', @default_who_reply_handler)
+			IRC::Utils.add_handler('ping', lambda {|event| bot.send_to_server("PONG #{event.message}") })
 		end
 	end
 end

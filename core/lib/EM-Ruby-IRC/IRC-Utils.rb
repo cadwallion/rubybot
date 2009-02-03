@@ -108,7 +108,7 @@ module IRC
 		end
 		
 		#Adds a handler for an irc event
-		def self.add_hander(eventname, proc, network=nil)
+		def self.add_handler(eventname, proc, network=nil)
 			if network.nil?
 				@@connections.each do |name, connection|
 					connection.add_startup_handler(lambda {|bot|

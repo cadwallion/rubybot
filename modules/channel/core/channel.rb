@@ -135,5 +135,5 @@ class ChannelModule
 end
 
 
-IRC::Utils.add_hander('endofmotd', ChannelModule.join_channels_handler)
-IRC::Utils.add_hander('nomotd', ChannelModule.join_channels_handler)
+IRC::Utils.add_handler('endofmotd', ChannelModule.join_channels_handler)
+IRC::Utils.add_handler('nomotd', ChannelModule.join_channels_handler)
