@@ -88,12 +88,16 @@ class ArmoryModule
       xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
+          logger.debug(armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].inspect)
           greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
           need = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Need rolls made on loot']"].attributes['quantity'].to_i
-          ratio = (need / (greed + need) * 100).to_i
+          logger.debug(greed)
+          logger.debug(need)
+          ratio = ((need.to_f / (greed + need)) * 100).to_i
+          logger.debug(ratio)
           output = case ratio
             when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}%)"
-            when 5 .. 15: "You are a nice person, maybe too nice. (#{ratio}%)"
+            when 5 .. 15: "You are not a greedy person. (#{ratio}%)"
             when 15 .. 30: "You should watch it, you're getting needy. (#{ratio}%)"
             when 30 .. 50: "Wow I'm glad you aren't my girlfriend/boyfriend. (#{ratio}%)"
             when 50 .. 75: "Do you understand the meaning of 'need'? (#{ratio}%)"
