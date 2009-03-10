@@ -18,7 +18,6 @@ private
     def self.read(url)
       begin
         EventMachine.run do
-          sleep 10
           attempt_number=0
           errors=""
           begin
@@ -31,6 +30,7 @@ private
             uri = URI.parse(url)
             http = EventMachine::Protocols::HttpClient.request(:host => uri.host, :port => uri.port, :request => uri.path)
             http.callback do |r|
+              logger.debug(r[:status])
               if (r[:status] != "OK") then
                 raise InvalidResponseFromFeed, r[:status]
               end
