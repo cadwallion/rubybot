@@ -17,7 +17,8 @@ private
   class Get
     def self.read(url)
       begin
-        EventMachine.fork_reactor do
+        resp = EventMachine::DelegatedHttpResponse.new(self)
+
           sleep 10
           attempt_number=0
           errors=""
@@ -28,16 +29,14 @@ private
             end
             
             uri = URI.parse(url)
-            http = Net::HTTP.new(uri.host, uri.port)
-            http.read_timeout = 10
-            http.open_timeout = 10
-            file = http.start() {|http|
-              http.get(uri.path)
-            }
-            
-  #          file = Net::HTTP.get_response URI.parse(url)
-            if (file.message != "OK") then
-              raise InvalidResponseFromFeed, file.message
+            http = EventMachine::Protocols::HttpClient.request(:host => uri.host, :port => uri.port, :request => uri.path)
+            http.callback do |r|
+              if (r[:status] != "OK") then
+                raise InvalidResponseFromFeed, file.message
+              end            
+              resp.status = 200
+              resp.content = r[:content]
+              resp.send_response
             end
           rescue Timeout::Error => err
             logger.debug "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
@@ -69,8 +68,6 @@ private
             errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
             sleep 10
             retry
-          else
-            return file.body
           end        
         end
       end
