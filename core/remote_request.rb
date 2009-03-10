@@ -17,8 +17,8 @@ private
   class Get
     def self.read(url)
       begin
-        EventMachine.fork do
-            sleep 10
+        EventMachine.fork_reactor do
+          sleep 10
           attempt_number=0
           errors=""
           begin
