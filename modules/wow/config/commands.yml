@@ -19,3 +19,8 @@ realmstatus:
   command: "Wow.realmstatus"
   num_args: 1
 
+greed:  
+  help: "Armory Character Greed displayer. The format for @greed is '@greed <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu|kr|cn) (.*) (.*)$'
+  command: "ArmoryModule.greed"
+  num_args: 3

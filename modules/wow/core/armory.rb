@@ -26,6 +26,13 @@ class ArmoryModule
       (points * 0.7).round.to_s
     end
   end
+  def self.greed(args, event)
+    if args =~ /^(us|eu|kr|cn) (.*) (.*)$/i
+      domain = domain_check($1)
+      return get_greed(domain, $2, $3)
+    end
+    return false
+  end
   def self.char_info(args, event)
     if args =~ /^(us|eu|kr|cn) (.*) (.*)$/i
       domain = domain_check($1)
@@ -74,6 +81,34 @@ class ArmoryModule
     end
     return output
   end
+  
+  def self.get_greed(domain, realm, charactername)
+    begin
+      url = URI.parse("http://#{domain}/character-statistics.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}&c=130").to_s
+      xmldoc = RemoteRequest.new("get").read(url)
+        armoryinfo = (REXML::Document.new xmldoc).root
+        if armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
+          greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
+          need = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Need rolls made on loot']"].attributes['quantity'].to_i
+          ratio = (need / (greed + need) * 100).to_i
+          output = case ratio
+            when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}%)"
+            when 5 .. 15: "You are a nice person, maybe too nice. (#{ratio}%)"
+            when 15 .. 30: "You should watch it, you're getting needy. (#{ratio}%)"
+            when 30 .. 50: "Wow I'm glad you aren't my girlfriend/boyfriend. (#{ratio}%)"
+            when 50 .. 75: "Do you understand the meaning of 'need'? (#{ratio}%)"
+            when 75 .. 100: "Wow you need to leave loot for everyone else! (#{ratio}%)"
+            else "Unknown greed level"
+          end
+          return output
+        else
+          return "Error getting data"
+      end
+    rescue => err
+      log_error(err)
+    end
+  end
+  
   def self.get_stats(domain, realm, charactername)
     begin
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
