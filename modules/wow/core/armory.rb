@@ -88,20 +88,17 @@ class ArmoryModule
       xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
-          logger.debug(armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].inspect)
           greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
           need = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Need rolls made on loot']"].attributes['quantity'].to_i
-          logger.debug(greed)
-          logger.debug(need)
+          return "No needs" if need < 1
           ratio = ((need.to_f / (greed + need)) * 100).to_i
-          logger.debug(ratio)
           output = case ratio
-            when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}%)"
-            when 5 .. 15: "You are not a greedy person. (#{ratio}%)"
-            when 15 .. 30: "You should watch it, you're getting needy. (#{ratio}%)"
-            when 30 .. 50: "Wow I'm glad you aren't my girlfriend/boyfriend. (#{ratio}%)"
-            when 50 .. 75: "Do you understand the meaning of 'need'? (#{ratio}%)"
-            when 75 .. 100: "Wow you need to leave loot for everyone else! (#{ratio}%)"
+            when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
+            when 5 .. 15: "You are not a greedy person. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
+            when 15 .. 30: "You should watch it, you're getting needy. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
+            when 30 .. 50: "Wow I'm glad you aren't my girlfriend/boyfriend. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
+            when 50 .. 75: "Do you understand the meaning of 'need'? (#{ratio}% needs - #{need} needs, #{greed} greeds)"
+            when 75 .. 100: "Wow you need to leave loot for everyone else! (#{ratio}% needs - #{need} needs, #{greed} greeds)"
             else "Unknown greed level"
           end
           return output
