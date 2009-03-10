@@ -16,55 +16,55 @@ class RemoteRequest
 private
   class Get
     def self.read(url)
-      
-      attempt_number=0
-      errors=""
-      begin
-        attempt_number=attempt_number+1
-        if (attempt_number > 2) then
-          return nil
+      EventMachine.run {
+        attempt_number=0
+        begin
+          attempt_number=attempt_number+1
+          if (attempt_number > 2) then
+            return nil
+            EM.stop
+          end
+          
+          uri = URI.parse(url)
+          
+          req = EM::Protocols::HttpClient.request(uri.host, uri.path)
+          req.callback do |response|
+            return response[:body]
+            EM.stop
+          end
+          
+          req.errback do |response|
+            logger.debug "Error from HTTP request: #{response[:status]}"
+            sleep 10
+            retry
+          end
+        rescue Timeout::Error => err
+          logger.debug "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+          sleep 10
+          retry
+        rescue Errno::ECONNREFUSED => err
+          logger.debug "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+          sleep 10
+          retry
+        rescue SocketError => exception
+          logger.debug "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+          sleep 10
+          retry
+        rescue EOFError => exception
+          logger.debug "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+          sleep 10
+          retry
+        rescue InvalidResponseFromFeed => err
+          logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+          sleep 10
+          retry
+        rescue => err
+          logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+          sleep 10
+          retry
+        else
+          return file.body
         end
-        
-        req = Net::HTTP.new(URI.parse(url))
-        req.open_timeout = 10
-        req.read_timeout = 10
-
-        file = req.get_response
-        if (file.message != "OK") then
-          raise InvalidResponseFromFeed, file.message
-        end
-      rescue Timeout::Error => err
-        logger.debug "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-        errors << "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-        sleep 10
-        retry
-      rescue Errno::ECONNREFUSED => err
-        logger.debug "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-        errors << "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-        sleep 10
-        retry
-      rescue SocketError => exception
-        logger.debug "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-        errors << "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-        sleep 10
-        retry
-      rescue EOFError => exception
-        logger.debug "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-        errors << "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-        sleep 10
-        retry
-      rescue InvalidResponseFromFeed => err
-        logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-        errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-        sleep 10
-        retry
-      rescue => err
-        logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-        errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-        sleep 10
-        retry
-      else
-        return file.body
       end
     end
   end
