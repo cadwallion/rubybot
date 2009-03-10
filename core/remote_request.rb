@@ -22,15 +22,15 @@ private
           attempt_number=attempt_number+1
           if (attempt_number > 2) then
             return nil
-            EM.stop
+            EventMachine.stop
           end
           
           uri = URI.parse(url)
           
-          req = EM::Protocols::HttpClient.request(uri.host, uri.path)
+          req = EventMachine::Protocols::HttpClient.request(uri.host, uri.path)
           req.callback do |response|
             return response[:body]
-            EM.stop
+            EventMachine.stop
           end
           
           req.errback do |response|
