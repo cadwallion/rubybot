@@ -30,7 +30,7 @@ private
             uri = URI.parse(url)
             http = EventMachine::Protocols::HttpClient.request(:host => uri.host, :port => uri.port, :request => uri.path)
             http.callback do |r|
-              logger.debug(r[:status])
+              logger.debug(r.inspect)
               if (r[:status] != "OK") then
                 raise InvalidResponseFromFeed, r[:status]
               end
@@ -38,6 +38,7 @@ private
               EventMachine.stop
             end
             http.errback do |r|
+              logger.debug(r.inspect)
               raise InvalidResponseFromFeed, r[:status]
             end
             EventMachine.add_timer(1) do
