@@ -87,7 +87,7 @@ class ArmoryModule
       url = URI.parse("http://#{domain}/character-statistics.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}&c=130").to_s
       xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
+        if armoryinfo and armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
           greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
           need = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Need rolls made on loot']"].attributes['quantity'].to_i
           return "#{charactername.capitalize} has never rolled need on an item." if need < 1
@@ -108,6 +108,7 @@ class ArmoryModule
     rescue => err
       log_error(err)
     end
+    return nil
   end
   
   def self.get_stats(domain, realm, charactername)
@@ -115,7 +116,7 @@ class ArmoryModule
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
       xmldoc = RemoteRequest.new("get").read(url)
         armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? and armoryinfo.elements['/page/characterInfo/characterTab']
+        if armoryinfo and armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? and armoryinfo.elements['/page/characterInfo/characterTab']
           character = {
             #General info, class, race, etc
             'characterclass' => armoryinfo.elements['/page/characterInfo/character'].attributes['class'],
@@ -221,6 +222,7 @@ class ArmoryModule
     rescue => err
       log_error(err)
     end
+    return nil
   end
 end
 

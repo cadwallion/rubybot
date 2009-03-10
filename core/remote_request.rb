@@ -10,51 +10,43 @@ class RemoteRequest
     data = @opener.read(url)
     b = Time.now
     logger.debug "Took #{b-a}s to get #{url}"
-    data
+    return data
   end
 
 private
   class Get
     def self.read(url)
       begin
-        EventMachine.run do
-          attempt_number=0
-          errors=""
-          begin
-            attempt_number=attempt_number+1
-            if (attempt_number > 2) then
-              return nil
-              EventMachine.stop
-            end
-            
-            uri = URI.parse(url)
-            http = EventMachine::Protocols::HttpClient.request(:host => uri.host, :port => uri.port, :request => uri.path)
-            http.callback do |r|
-              logger.debug(r.inspect)
-              if (r[:status] != "OK") then
-                logger.debug "Invalid response: #{r[:status]}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-              else
-                return r[:content]
-                EventMachine.stop
-              end
-            end
-            http.errback do |r|
-              logger.debug(r.inspect)
-              logger.debug "Invalid response: #{r[:status]}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            end
-            EventMachine.add_timer(5) do
-              http.set_deferred_status :failed, "Timeout"
-            end
-          rescue => err
-            logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            sleep 10
-            retry
-          else
-            sleep 10
-            retry
-          end    
+        timeout(10) do
+          file = Net::HTTP.get_response URI.parse(url)
+          if (file.message != "OK") then
+            raise InvalidResponseFromFeed, file.message
+          end
+          return file.body
         end
+      rescue TimeoutError => err
+        logger.debug "Timeout Error: #{err}."
+        log_error(err)
+      rescue Timeout::Error => err
+        logger.debug "Timeout Error: #{err}."
+        log_error(err)
+      rescue Errno::ECONNREFUSED => err
+        logger.debug "Connection Error: #{err}."
+        log_error(err)
+      rescue SocketError => err
+        logger.debug "Socket Error: #{err}."
+        log_error(err)
+      rescue EOFError => err
+        logger.debug "Socket Error: #{err}."
+        log_error(err)
+      rescue InvalidResponseFromFeed => err
+        logger.debug "Invalid response: #{err}."
+        log_error(err)
+      rescue => err
+        logger.debug "Unknown Error: #{err}."
+        log_error(err)
       end
+      return nil
     end
   end
 end
@@ -64,3 +56,5 @@ class InvalidResponseFromFeed < RuntimeError
   @info = info
   end
 end
+
+# RemoteRequest.new("get").read("http://www.tecnobrat.com/")
