@@ -17,8 +17,8 @@ private
   class Get
     def self.read(url)
       begin
-        operation = proc do
-          sleep 10
+        EventMachine.fork do
+            sleep 10
           attempt_number=0
           errors=""
           begin
@@ -73,13 +73,6 @@ private
             return file.body
           end        
         end
-        
-        callback = proc do |res|
-          return res
-        end
-        EventMachine.defer(operation, callback)
-      rescue => err
-        log_error(err)
       end
     end
   end
