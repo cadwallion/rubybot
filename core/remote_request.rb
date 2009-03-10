@@ -32,49 +32,27 @@ private
             http.callback do |r|
               logger.debug(r.inspect)
               if (r[:status] != "OK") then
-                raise InvalidResponseFromFeed, r[:status]
+                logger.debug "Invalid response: #{r[:status]}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
+              else
+                return r[:content]
+                EventMachine.stop
               end
-              return r[:content]
-              EventMachine.stop
             end
             http.errback do |r|
               logger.debug(r.inspect)
-              raise InvalidResponseFromFeed, r[:status]
+              logger.debug "Invalid response: #{r[:status]}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
             end
-            EventMachine.add_timer(1) do
+            EventMachine.add_timer(5) do
               http.set_deferred_status :failed, "Timeout"
             end
-          rescue Timeout::Error => err
-            logger.debug "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            errors << "Timeout Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-            sleep 10
-            retry
-          rescue Errno::ECONNREFUSED => err
-            logger.debug "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            errors << "Connection Error: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-            sleep 10
-            retry
-          rescue SocketError => exception
-            logger.debug "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            errors << "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-            sleep 10
-            retry
-          rescue EOFError => exception
-            logger.debug "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            errors << "Socket Error: #{exception}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-            sleep 10
-            retry
-          rescue InvalidResponseFromFeed => err
-            logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
-            sleep 10
-            retry
           rescue => err
             logger.debug "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number})."
-            errors << "Invalid response: #{err}, sleeping for 10 secs, and trying again (Attempt #{attempt_number}).\n"
             sleep 10
             retry
-          end        
+          else
+            sleep 10
+            retry
+          end    
         end
       end
     end
