@@ -13,11 +13,6 @@ ap:
   regex: "^([235]) ([0-9]*)$"
   num_args: 2
   command: "ArmoryModule.show_points"
-buffinfo:
-  help: "Shows information about a buff on a character. The format for @buffinfo is '@buffinfo <us/eu> <realm name> <character name> <buff name>'."
-  regex: '^(us|eu|US|EU) (.*) ([a-zA-Z]*) (.*)$'
-  command: "ArmoryModule.buffinfo"
-  num_args: 3
 realmstatus:
   help: "Shows realm up/down status.  The format for @realmstatus is '@realmstatus <us/eu> [optional server name]'."
   regex: '^(us|eu)(.*)'

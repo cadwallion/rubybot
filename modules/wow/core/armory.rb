@@ -110,11 +110,11 @@ class ArmoryModule
             #melee stats
             'melee_expertise' => armoryinfo.elements['/page/characterInfo/characterTab/melee/expertise'].attributes["percent"],
             'melee_mainhand_damage' => armoryinfo.elements['/page/characterInfo/characterTab/melee/mainHandDamage'].attributes["min"]+"-"+armoryinfo.elements['/page/characterInfo/characterTab/melee/mainHandDamage'].attributes["max"],
-            'melee_offhand_damage' => armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandDamage'].attributes["min"]+"-"+armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandDamage'].attributes["max"],
+            'melee_offhand_damage' => armoryinfo.elements["/page/characterInfo/characterTab/items/item[@slot='16']"].nil? ? nil : armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandDamage'].attributes["min"]+"-"+armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandDamage'].attributes["max"],
             'melee_mainhand_damage_dps' => armoryinfo.elements['/page/characterInfo/characterTab/melee/mainHandDamage'].attributes["dps"],
-            'melee_offhand_damage_dps' => armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandDamage'].attributes["dps"],
+            'melee_offhand_damage_dps' => armoryinfo.elements["/page/characterInfo/characterTab/items/item[@slot='16']"].nil? ? nil : armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandDamage'].attributes["dps"],
             'melee_mainhand_speed' => armoryinfo.elements['/page/characterInfo/characterTab/melee/mainHandSpeed'].attributes["value"],
-            'melee_offhand_speed' => armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandSpeed'].attributes["value"],
+            'melee_offhand_speed' => armoryinfo.elements["/page/characterInfo/characterTab/items/item[@slot='16']"].nil? ? nil : armoryinfo.elements['/page/characterInfo/characterTab/melee/offHandSpeed'].attributes["value"],
             'melee_power' => armoryinfo.elements['/page/characterInfo/characterTab/melee/power'].attributes["effective"],
             'melee_hitrating' => armoryinfo.elements['/page/characterInfo/characterTab/melee/hitRating'].attributes["increasedHitPercent"],
             'melee_crit' => armoryinfo.elements['/page/characterInfo/characterTab/melee/critChance'].attributes["percent"],
@@ -149,6 +149,7 @@ class ArmoryModule
             'spell_haste' => armoryinfo.elements['/page/characterInfo/characterTab/spell/hasteRating'].attributes["hastePercent"],
             #defenses
             'defenses_armor' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/armor'].attributes["effective"],
+            'defenses_armor_perc' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/armor'].attributes["percent"],
             'defenses_defense' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/defense'].attributes["value"] +"+"+ armoryinfo.elements['/page/characterInfo/characterTab/defenses/defense'].attributes["plusDefense"],
             'defenses_dodge' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/dodge'].attributes["percent"],
             'defenses_parry' => armoryinfo.elements['/page/characterInfo/characterTab/defenses/parry'].attributes["percent"],
@@ -170,75 +171,16 @@ class ArmoryModule
               end
             end
             stats.sort.each do |statkey,stat|
-              output = output + " #{stat}: #{character[statkey]};"
-            end
-            if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
-              buffs = ""
-              armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
-                if buffs.nil? or buffs == ""
-                  buffs = "Buffs: "
-                  buffs = buffs + "#{buff.attributes["name"]}"
-                else
-                  buffs = buffs + ", #{buff.attributes["name"]}"
-                end
+              unless character[statkey].nil? or character[statkey] == ""
+                output = output + " #{stat}: #{character[statkey]};"
               end
-            else
-              buffs = ""
             end
-            return [output, buffs] if buffs != ""
             return output
           else
             return "Sorry, I don't know how to handle your class yet."
           end
         else
           return "Character #{charactername}, not found."
-        end
-    rescue => err
-      log_error(err)
-    end
-  end
-  def self.get_buffs(domain, realm, charactername)
-    begin
-      output = nil
-      url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
-      xmldoc = RemoteRequest.new("get").read(url)
-        armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
-          armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
-            if output.nil?
-              output = "Buffs: "
-              output = output + "#{buff.attributes["name"]}"
-            else
-              output = output + ", #{buff.attributes["name"]}"
-            end
-          end
-          output
-        else
-          ""
-        end
-    rescue => err
-      log_error(err)
-    end
-  end
-  def self.get_buff_info(domain, realm, charactername, buffname)
-    begin
-      output = nil
-      url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
-      xmldoc = RemoteRequest.new("get").read(url)
-        armoryinfo = (REXML::Document.new xmldoc).root
-        if armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any?
-          armoryinfo.elements.each('/page/characterInfo/characterTab/buffs/spell') do |buff|
-            if buffname == buff.attributes["name"]
-              output = buff.attributes["name"] + ": " + buff.attributes["effect"]
-            end
-          end
-          if !output.nil?
-            output
-          else
-            "Could not find buff"
-          end
-        else
-          "Character not found"
         end
     rescue => err
       log_error(err)
@@ -261,12 +203,12 @@ end
 
 @@class_show_stats = {
   'death knight' => {
-    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %'},
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %', 'defenses_armor' => 'Armor', 'defenses_armor_perc' => 'Armor Reduction %', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %'},
   },
   'druid' => {
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
     'balance' => {'spell_arcane_damage' => 'Arcane Damage', 'spell_arcane_crit' => 'Arcane Crit %', 'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'spell_haste' => 'Spell Haste %'},
-    'feral' => {'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'melee_haste' => 'Melee Haste %'},
+    'feral' => {'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'melee_haste' => 'Melee Haste %', 'defenses_armor_perc' => 'Armor Reduction %'},
     'restoration' => {'spell_bonus_healing' => 'Plus Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Spell Haste %'},
   },
   'hunter' => {
@@ -281,7 +223,7 @@ end
   'paladin' => {
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
     'holy' => {'intellect' => 'Intellect', 'spell_holy_damage' => 'Holy Damage', 'spell_bonus_healing' => 'Plus Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Spell Haste %'},  
-    'protection' => {'spell_holy_damage' => 'Holy Damage', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'melee_haste' => 'Melee Haste %'},
+    'protection' => {'spell_holy_damage' => 'Holy Damage', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'melee_haste' => 'Melee Haste %', 'defenses_armor_perc' => 'Armor Reduction %'},
     'retribution' => {'spell_holy_damage' => 'Holy Damage', 'melee_expertise' => 'Expertise %', 'melee_mainhand_damage' => 'Weapon Damage', 'melee_mainhand_damage_dps' => 'Weapon DPS', 'melee_mainhand_speed' => 'Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_haste' => 'Melee Haste %'},
   },
   'priest' => {
@@ -304,7 +246,7 @@ end
   },
   'warrior' => {
     'base' => {'health' => 'Health', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %'},
-    'protection' => {'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %'},
+    'protection' => {'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'defenses_armor_perc' => 'Armor Reduction %'},
     'fury' => {'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit'},
     'arms' => {'melee_mainhand_damage' => 'Weapon Damage', 'melee_mainhand_damage_dps' => 'Weapon DPS', 'melee_mainhand_speed' => 'Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit'},
   },

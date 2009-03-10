@@ -25,6 +25,10 @@ class SystemModule
     return "I am #{@@bot.nick}"
   end
 
+  def self.time(args, event)
+    return "It is #{Time.now.to_i}.  #{1234567890 - Time.now.to_i} seconds left."
+  end
+
   def self.do_roll(args, event)
     if args =~ /^([0-9]*)$/i
       limit = $1.to_i

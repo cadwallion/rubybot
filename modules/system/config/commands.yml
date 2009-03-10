@@ -20,3 +20,5 @@ roll:
 help:
   help: "You expect to get help on help? You sad person you."
   command: "SystemModule.do_help"
+time:
+  command: "SystemModule.time"
