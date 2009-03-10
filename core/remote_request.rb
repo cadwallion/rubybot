@@ -16,6 +16,7 @@ class RemoteRequest
 private
   class Get
     def self.read(url)
+      
       attempt_number=0
       errors=""
       begin
@@ -24,7 +25,11 @@ private
           return nil
         end
         
-        file = Net::HTTP.get_response URI.parse(url)
+        req = Net::HTTP.new(URI.parse(url))
+        req.open_timeout = 10
+        req.read_timeout = 10
+
+        file = req.get_response
         if (file.message != "OK") then
           raise InvalidResponseFromFeed, file.message
         end
