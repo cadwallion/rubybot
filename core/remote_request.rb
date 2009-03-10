@@ -70,7 +70,6 @@ private
             retry
           end        
         end
-      end
     end
   end
 end
