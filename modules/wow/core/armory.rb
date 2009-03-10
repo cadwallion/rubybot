@@ -90,7 +90,7 @@ class ArmoryModule
         if armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
           greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
           need = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Need rolls made on loot']"].attributes['quantity'].to_i
-          return "No needs" if need < 1
+          return "#{charactername} has never rolled need on an item." if need < 1
           ratio = ((need.to_f / (greed + need)) * 100).to_i
           output = case ratio
             when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
@@ -101,7 +101,7 @@ class ArmoryModule
             when 75 .. 100: "Wow you need to leave loot for everyone else! (#{ratio}% needs - #{need} needs, #{greed} greeds)"
             else "Unknown greed level"
           end
-          return output
+          return "#{charactername}: #{output}"
         else
           return "Error getting data"
       end
