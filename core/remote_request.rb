@@ -16,7 +16,7 @@ class RemoteRequest
 private
   class Get
     def self.read(url)
-      EventMachine.run {
+      EventMachine.run
         attempt_number=0
         begin
           attempt_number=attempt_number+1
