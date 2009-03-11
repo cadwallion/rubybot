@@ -56,5 +56,3 @@ class InvalidResponseFromFeed < RuntimeError
   @info = info
   end
 end
-
-# RemoteRequest.new("get").read("http://www.tecnobrat.com/")
