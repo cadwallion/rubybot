@@ -33,8 +33,12 @@ class SystemModule
     if args =~ /^([0-9]*)$/i
       limit = $1.to_i
       limit = 100 if limit <= 0
+      limit = limit + 2
       random_number = rand(limit)
-      return "#{event.from.capitalize} rolled #{random_number.to_s} (0-#{limit})."
+      random_number = "00" if random_number == 0
+      random_number = random_number - 1 unless random_number == "00"
+      limit = limit - 2
+      return "#{event.from.capitalize} rolled #{random_number.to_s} (00-#{limit})."
     else
       random_number = rand(100)
       "#{event.from.capitalize} rolled #{random_number.to_s} (0-100)."
