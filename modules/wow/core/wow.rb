@@ -17,6 +17,28 @@ class Wow
     return false
   end
 
+  def self.notices(args, event)
+    return getnotices
+  end
+
+  def self.getnotices
+    output = ""
+    number = 0
+    url = URI.parse('http://launcher.worldofwarcraft.com/alert').to_s  
+    doc = RemoteRequest.new("get").read(url)
+    doc.split("\n").each do |line|
+      unless line == "SERVERALERT:" or line == ""
+        if line =~ /^\[.*\]$/
+          number = number + 1
+          line = line + " - "
+        end
+        return output if number > 1
+        output = output + line
+      end
+    end
+    return output
+  end
+
   def self.getrealmstatus_us
     url = URI.parse('http://www.worldofwarcraft.com/realmstatus/index.xml').to_s  
     xmldoc = RemoteRequest.new("get").read(url)
