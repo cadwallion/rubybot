@@ -86,6 +86,7 @@ class ArmoryModule
     begin
       url = URI.parse("http://#{domain}/character-statistics.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}&c=130").to_s
       xmldoc = RemoteRequest.new("get").read(url)
+        return "#{charactername.capitalize}: Error downloading armory profile, armory may be down" unless xmldoc
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo and armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
           greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
@@ -103,7 +104,7 @@ class ArmoryModule
           end
           return "#{charactername.capitalize}: #{output}"
         else
-          return "Error getting data"
+          return "#{charactername.capitalize}: Error getting data"
       end
     rescue => err
       log_error(err)
@@ -115,6 +116,7 @@ class ArmoryModule
     begin
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
       xmldoc = RemoteRequest.new("get").read(url)
+        return "#{charactername.capitalize}: Error downloading armory profile, armory may be down" unless xmldoc
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo and armoryinfo.elements['/page/characterInfo/character'] and armoryinfo.elements['/page/characterInfo/character'].attributes.any? and armoryinfo.elements['/page/characterInfo/characterTab']
           character = {
@@ -129,9 +131,9 @@ class ArmoryModule
             'realm' => armoryinfo.elements['/page/characterInfo/character'].attributes['realm'],
             'title' => armoryinfo.elements['/page/characterInfo/character'].attributes['title'],
             #Talents
-            'talents_1' => armoryinfo.elements['/page/characterInfo/characterTab/talentSpec'].attributes["treeOne"],
-            'talents_2' => armoryinfo.elements['/page/characterInfo/characterTab/talentSpec'].attributes["treeTwo"],
-            'talents_3' => armoryinfo.elements['/page/characterInfo/characterTab/talentSpec'].attributes["treeThree"],
+            'talents_1' => armoryinfo.elements['/page/characterInfo/characterTab/talentSpecs/talentSpec[@active="1"]'].attributes["treeOne"],
+            'talents_2' => armoryinfo.elements['/page/characterInfo/characterTab/talentSpecs/talentSpec[@active="1"]'].attributes["treeTwo"],
+            'talents_3' => armoryinfo.elements['/page/characterInfo/characterTab/talentSpecs/talentSpec[@active="1"]'].attributes["treeThree"],
             #PVP
             'pvpkills' => armoryinfo.elements['/page/characterInfo/characterTab/pvp/lifetimehonorablekills'].attributes["value"],
             #Health and Mana
@@ -214,7 +216,7 @@ class ArmoryModule
             end
             return output
           else
-            return "Sorry, I don't know how to handle your class yet."
+            return "#{charactername.capitalize}: Sorry, I don't know how to handle your class yet."
           end
         else
           return "Character #{charactername}, not found."

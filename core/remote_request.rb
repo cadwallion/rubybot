@@ -20,6 +20,7 @@ private
         timeout(10) do
           file = Net::HTTP.get_response URI.parse(url)
           if (file.message != "OK") then
+            logger.debug("XML Response: #{file.message}")
             raise InvalidResponseFromFeed, file.message
           end
           return file.body
