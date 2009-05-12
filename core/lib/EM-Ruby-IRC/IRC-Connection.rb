@@ -54,7 +54,7 @@ module IRC
 			logger.debug("[#{self.name}] Connection lost, sleeping 10 seconds")
 			sleep 10
 			logger.debug("[#{self.name}] Reconnecting")
-			self.setup.reconnect
+			self.reconnect
 		end
 
 		def add_message_handler(event_type, proc=nil, &handler)
