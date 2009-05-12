@@ -24,7 +24,7 @@ module IRC
 		
 		#Send login details and then start handlers
 		#TODO: Need to add nickname already in use fix
-		def post_init
+		def connection_completed
 			begin
 				send_to_server "NICK #{@nickname}"
 				send_to_server "USER #{@username} 8 * :#{@realname}"
@@ -54,7 +54,7 @@ module IRC
 			logger.info("[#{self.name}] Connection lost, sleeping 10 seconds")
 			sleep 10
 			logger.info("[#{self.name}] Reconnecting to: #{setup.config["server_address"]} Port: #{setup.config["server_port"]}")
-			self.reconnect setup.config["server_address"], setup.config["server_port"].to_i
+			setup.reconnect setup.config["server_address"], setup.config["server_port"].to_i, self
 		end
 
 		def add_message_handler(event_type, proc=nil, &handler)
