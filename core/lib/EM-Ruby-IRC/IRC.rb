@@ -36,13 +36,17 @@ module IRC
 			begin
 				if defined?(EventMachine::fork_reactor)
 					logger.debug("Event machine supports forking, attempting to fork.")
-					EventMachine::fork_reactor {
+					pid = EventMachine::fork_reactor {
 						begin
 							self.connection = EventMachine::connect(config["server_address"], config["server_port"].to_i, IRC::Connection, :setup => self)
+							
 						rescue => err
 							log_error(err)
 						end
 					}
+
+          File.open("#{self.name}.pid", 'w') {|f| f << pid}
+          Process.detach(pid)
 				else
 					logger.warn("WARNING: Version of eventmachine does not support forking.  If you specified multiple connections you will only connect to one.")
 					EventMachine::run {
