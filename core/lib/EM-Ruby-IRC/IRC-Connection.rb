@@ -30,22 +30,14 @@ module IRC
 						handler.call(self) unless handler.nil?
 					end
 				end
-			rescue => err
-				log_error(err)
-			end
-		end
-
-		#Send username and nickname once connection has been established.
-		def connection_completed
-			begin
 				send_to_server "NICK #{@nickname}"
 				send_to_server "USER #{@username} 8 * :#{@realname}"
 			rescue => err
 				log_error(err)
 			end
 		end
-			
-		def receive_data(data)
+
+  	def receive_data(data)
 			data.split("\n").each do |line|
 				log_irc(line)
 				IRC::Event.new(line, self)
@@ -61,7 +53,7 @@ module IRC
 			logger.info("[#{self.name}] Connection lost, sleeping 10 seconds")
 			sleep 10
 			logger.info("[#{self.name}] Reconnecting to: #{setup.config["server_address"]} Port: #{setup.config["server_port"]}")
-			setup.reconnect setup.config["server_address"], setup.config["server_port"].to_i, self
+			setup.reconnect setup.config["server_address"], setup.config["server_port"].to_i, self, :setup => setup
 		end
 
 		def add_message_handler(event_type, proc=nil, &handler)

@@ -39,7 +39,6 @@ module IRC
 					pid = EventMachine::fork_reactor {
 						begin
 							self.connection = EventMachine::connect(config["server_address"], config["server_port"].to_i, IRC::Connection, :setup => self)
-							
 						rescue => err
 							log_error(err)
 						end
