@@ -38,6 +38,7 @@ module IRC
 		
 		#Creates the user in the channel userlist (IRC::Channel#users) and then returns the user
 		def self.channel_user(connection, channel_name, user_name, hostmask=nil)
+		  return false if channel_name.nil? or user_name.nil?
 			user_name = sanitize_nickname(user_name)
 			channel_name = channel_name.downcase.chomp
 			user = global_user(connection, user_name, hostmask)
