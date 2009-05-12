@@ -22,17 +22,24 @@ module IRC
 			end
 		end
 		
-		#Send login details and then start handlers
-		#TODO: Need to add nickname already in use fix
-		def connection_completed
+		#Start handlers
+    def post_init
 			begin
-				send_to_server "NICK #{@nickname}"
-				send_to_server "USER #{@username} 8 * :#{@realname}"
-				unless setup.startup_handlers.nil?
+      	unless setup.startup_handlers.nil?
 					setup.startup_handlers.each do |handler|
 						handler.call(self) unless handler.nil?
 					end
 				end
+			rescue => err
+				log_error(err)
+			end
+		end
+
+		#Send username and nickname once connection has been established.
+		def connection_completed
+			begin
+				send_to_server "NICK #{@nickname}"
+				send_to_server "USER #{@username} 8 * :#{@realname}"
 			rescue => err
 				log_error(err)
 			end
