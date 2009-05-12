@@ -53,7 +53,7 @@ module IRC
 			logger.info("[#{self.name}] Connection lost, sleeping 10 seconds")
 			sleep 10
 			logger.info("[#{self.name}] Reconnecting to: #{setup.config["server_address"]} Port: #{setup.config["server_port"]}")
-			EventMachine::reconnect setup.config["server_address"], setup.config["server_port"].to_i, self, :setup => setup
+			EventMachine::reconnect setup.config["server_address"], setup.config["server_port"].to_i, self
 		end
 
 		def add_message_handler(event_type, proc=nil, &handler)
