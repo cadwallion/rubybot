@@ -32,10 +32,6 @@ module IRC
 			startup_handlers.clear
 		end
 		
-		def reconnect
-		  self.connection = EventMachine::reconnect(config["server_address"], config["server_port"].to_i, IRC::Connection, :setup => self)
-		end
-		
 		def connect
 			begin
 				if defined?(EventMachine::fork_reactor)
