@@ -24,6 +24,7 @@ module IRC
 		
 		#Start handlers
     def post_init
+      logger.debug("Firing post_init")
 			begin
       	unless setup.startup_handlers.nil?
 					setup.startup_handlers.each do |handler|
