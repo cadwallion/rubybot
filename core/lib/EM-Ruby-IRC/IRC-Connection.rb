@@ -51,11 +51,10 @@ module IRC
 		end
 		
 		def unbind
-			logger.debug("[#{self.name}] Connection lost, sleeping 10 seconds")
+			logger.info("[#{self.name}] Connection lost, sleeping 10 seconds")
 			sleep 10
-			logger.debug("[#{self.name}] Reconnecting to #{setup.config["server_name"]} #{setup.config["server_port"]}")
-			logger.debug("[#{self.name}] #{setup.config.inspect}")
-			self.reconnect setup.config["server_name"], setup.config["server_port"].to_i
+			logger.info("[#{self.name}] Reconnecting to: #{setup.config["server_address"]} Port: #{setup.config["server_port"]}")
+			self.reconnect setup.config["server_address"], setup.config["server_port"].to_i
 		end
 
 		def add_message_handler(event_type, proc=nil, &handler)
