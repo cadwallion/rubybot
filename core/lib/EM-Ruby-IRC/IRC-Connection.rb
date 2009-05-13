@@ -31,12 +31,16 @@ module IRC
 						handler.call(self) unless handler.nil?
 					end
 				end
-				send_to_server "NICK #{@nickname}"
-				send_to_server "USER #{@username} 8 * :#{@realname}"
 			rescue => err
 				log_error(err)
 			end
 		end
+
+	def connection_completed
+		logger.debug("Firing connection_completed")
+				send_to_server "NICK #{@nickname}"
+				send_to_server "USER #{@username} 8 * :#{@realname}"
+	end
 
   	def receive_data(data)
 			data.split("\n").each do |line|
