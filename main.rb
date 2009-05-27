@@ -71,4 +71,9 @@ load 'core/handlers.rb' # TODO: Re-enable handlers
 setup_modules
 
 #connect to all networks.  If you only want to connect to a single network, send the network name as a argument (EG: IRC::Utils.connect('freenode'))
-IRC::Utils.connect
+
+unless ARGV[0].nil?
+  IRC::Utils.connect(ARGV[0])
+else
+  IRC::Utils.connect
+end

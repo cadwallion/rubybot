@@ -112,9 +112,25 @@ class ArmoryModule
     return nil
   end
   
+  def self.mktinyurl(url)
+    begin
+      url = URI.parse("http://tinyurl.com/api-create.php?url=#{url}").to_s
+      tinyurl = RemoteRequest.new("get").read(url)
+      if tinyurl =~ /^http:\/\/tinyurl\.com\/.*/
+        return tinyurl
+      else
+        return false
+      end
+    rescue => err
+      log_error(err)
+    end
+    return false
+  end
+  
   def self.get_stats(domain, realm, charactername)
     begin
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
+      tinyurl = mktinyurl(URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s)
       xmldoc = RemoteRequest.new("get").read(url)
         return "#{charactername.capitalize}: Error downloading armory profile, armory may be down" unless xmldoc
         armoryinfo = (REXML::Document.new xmldoc).root
@@ -213,6 +229,9 @@ class ArmoryModule
               unless character[statkey].nil? or character[statkey] == ""
                 output = output + " #{stat}: #{character[statkey]};"
               end
+            end
+            if tinyurl
+              output = "#{output} #{tinyurl}"
             end
             return output
           else
