@@ -31,6 +31,8 @@ require 'core/remote_request.rb'
 require 'core/memcache.rb'
 require 'core/config.rb'
 
+Sequel::Model.plugin :validation_class_methods
+
 #setup database connection
 require 'core/database.rb'
 

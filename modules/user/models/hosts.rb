@@ -1,3 +1,3 @@
 class Host < Sequel::Model
-  belongs_to :user
+  many_to_one :user
 end
