@@ -4,3 +4,4 @@ translate:
 garble:
   help: "Garble some text"
   command: "TranslateModule.garble"
+  pm_only: 1

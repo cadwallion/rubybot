@@ -36,7 +36,7 @@ class ArmoryModule
   def self.char_info(args, event)
     if args =~ /^(us|eu|kr|cn) (.*) (.*)$/i
       domain = domain_check($1)
-      return get_stats(domain, $2, $3)
+      return get_stats(domain, $2, $3, $1)
     end
     return false
   end
@@ -47,7 +47,9 @@ class ArmoryModule
   def self.armory_link(args, event)
     if args =~ /^(us|eu|kr|cn) (.*) (.*)$/i
       domain = domain_check($1)
-      return "#{$3.capitalize}'s profile: http://#{domain}/character-sheet.xml?r=#{URI.encode($2.capitalize)}&n=#{URI.encode($3.capitalize)}"
+      tinyurl = mktinyurl(URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode($2)}&n=#{URI.encode($3)}").to_s)
+      whtinyurl = mktinyurl(URI.parse("http://profiler.wowhead.com/?profile=#{URI.encode($1)}.#{URI.encode($2)}.#{URI.encode($3)}").to_s)
+      return "#{$3.capitalize}'s Wowhead Profile: #{whtinyurl} - WowArmory Profile: #{tinyurl}"
     end
     return false
   end
@@ -127,10 +129,11 @@ class ArmoryModule
     return false
   end
   
-  def self.get_stats(domain, realm, charactername)
+  def self.get_stats(domain, realm, charactername, country)
     begin
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
       tinyurl = mktinyurl(URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s)
+      whtinyurl = mktinyurl(URI.parse("http://profiler.wowhead.com/?profile=#{URI.encode(country)}.#{URI.encode(realm)}.#{URI.encode(charactername)}").to_s)
       xmldoc = RemoteRequest.new("get").read(url)
         return "#{charactername.capitalize}: Error downloading armory profile, armory may be down" unless xmldoc
         armoryinfo = (REXML::Document.new xmldoc).root
@@ -231,7 +234,7 @@ class ArmoryModule
               end
             end
             if tinyurl
-              output = "#{output} #{tinyurl}"
+              output = "#{output} Wowhead Profile: #{whtinyurl} WowArmory: #{tinyurl}"
             end
             return output
           else
