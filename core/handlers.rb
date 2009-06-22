@@ -10,6 +10,17 @@ class IRCHandler
 			return event.from
 		end
 	end
+
+	def self.is_pm?(event)
+		if event.channel =~ /#(.*)/
+			# event was a channel message
+			#return event.from if ChannelModule.is_quiet?(event.channel) #TODO: re-enable this
+			return false
+		else
+			# event was a private message
+			return true
+		end
+	end
 	
 	# initial response block from the event handler
 	def self.message_handler
@@ -95,6 +106,9 @@ class IRCHandler
 				opts = args.split(' ')
 				if command['admin'] == 1
 					return ["You need to be an admin.", "notice"] unless UserModule.is_admin?(event)
+				end
+                                if command['pm_only'] == 1
+					return ["This command is usable via Private Message only.", "notice"] unless is_pm?(event)
 				end
 				if opts.size < num_args or (!command['regex'].nil? and !(args =~ Regexp.new(command['regex'], true)))
 					unless command['help'].nil?
