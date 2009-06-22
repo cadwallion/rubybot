@@ -3,6 +3,11 @@ armory:
   regex: '^(us|eu|kr|cn) (.*) (.*)$'
   command: "ArmoryModule.armory_link"
   num_args: 3
+profile:
+  help: "Profile link generator. The format for @armory is '@armory <us/eu> <realm name> <character name>'."
+  regex: '^(us|eu|kr|cn) (.*) (.*)$'
+  command: "ArmoryModule.armory_link"
+  num_args: 3
 char:  
   help: "Armory Character Stats displayer. The format for @char is '@char <us/eu> <realm name> <character name>'."
   regex: '^(us|eu|kr|cn) (.*) (.*)$'
