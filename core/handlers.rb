@@ -137,5 +137,3 @@ class IRCHandler
 		log_error(err)
 	end
 end
-
-IRC::Utils.add_handler('privmsg', IRCHandler.message_handler)
