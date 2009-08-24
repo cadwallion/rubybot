@@ -35,7 +35,7 @@ module IRC
 		
 		def connect
 			begin
-				if defined?(EventMachine::fork_reactor) and false
+				if defined?(EventMachine::fork_reactor)
 					logger.warn("Event machine supports forking, attempting to fork.")
 					pid = EventMachine::fork_reactor {
 						begin
