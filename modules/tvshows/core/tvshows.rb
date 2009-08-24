@@ -1,4 +1,4 @@
-class TVShowModule
+class TvshowsModule
   def self.search(term)
     begin
       url = URI.parse("http://www.tvrage.com/feeds/search.php?show=#{URI.encode(term)}").to_s

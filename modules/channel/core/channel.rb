@@ -1,4 +1,9 @@
 class ChannelModule
+  def self.init(bot)
+    bot.add_handler('endofmotd', ChannelModule.join_channels_handler)
+    bot.add_handler('nomotd', ChannelModule.join_channels_handler)
+  end
+  
 	def self.join_channel(args, event)
 		args = args.split
 		unless Channel.find(:name => args[0])
@@ -133,7 +138,3 @@ class ChannelModule
 		end
 	end
 end
-
-
-IRC::Utils.add_handler('endofmotd', ChannelModule.join_channels_handler)
-IRC::Utils.add_handler('nomotd', ChannelModule.join_channels_handler)

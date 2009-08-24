@@ -14,13 +14,14 @@ require 'core/lib/EM-Ruby-IRC/default-handlers.rb'
 module IRC
 	class Setup
 		attr_reader :name, :config
-		attr_accessor :connection, :startup_handlers, :memcache
-		def initialize(name, config)
+		attr_accessor :connection, :startup_handlers, :memcache, :bot
+		def initialize(bot, name, config)
 			@name = name
 			@connection = nil
 			@startup_handlers = Array.new
 			@config = config
 			@memcache = nil
+			@bot = bot
 			default_handlers
 		end
 		
@@ -34,8 +35,8 @@ module IRC
 		
 		def connect
 			begin
-				if defined?(EventMachine::fork_reactor)
-					logger.debug("Event machine supports forking, attempting to fork.")
+				if defined?(EventMachine::fork_reactor) and false
+					logger.warn("Event machine supports forking, attempting to fork.")
 					pid = EventMachine::fork_reactor {
 						begin
 							self.connection = EventMachine::connect(config["server_address"], config["server_port"].to_i, IRC::Connection, :setup => self)

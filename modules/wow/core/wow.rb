@@ -1,4 +1,4 @@
-class Wow
+class WowModule
   def self.realmstatus(args, event)
     if args =~ /^(us|eu|US|EU)$/
       if $1 == "us" or $1 == "US"

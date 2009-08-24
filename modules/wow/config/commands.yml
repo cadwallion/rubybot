@@ -21,7 +21,7 @@ ap:
 realmstatus:
   help: "Shows realm up/down status.  The format for @realmstatus is '@realmstatus <us/eu> [optional server name]'."
   regex: '^(us|eu)(.*)'
-  command: "Wow.realmstatus"
+  command: "WowModule.realmstatus"
   num_args: 1
 greed:  
   help: "Armory Character Greed displayer. The format for @greed is '@greed <us/eu> <realm name> <character name>'."
@@ -30,4 +30,4 @@ greed:
   num_args: 3
 notices:  
   help: "Wow Breaking News Displayer The format for @notices is '@notices'."
-  command: "Wow.notices"
+  command: "WowModule.notices"

@@ -38,8 +38,8 @@ module IRC
 
 	def connection_completed
 		logger.debug("Firing connection_completed")
-				send_to_server "NICK #{@nickname}"
-				send_to_server "USER #{@username} 8 * :#{@realname}"
+		send_to_server "NICK #{@nickname}"
+		send_to_server "USER #{@username} 8 * :#{@realname}"
 	end
 
   	def receive_data(data)

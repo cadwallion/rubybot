@@ -89,36 +89,18 @@ module IRC
 		end
 		
 		#Sets up all connections into global @@connections
-		def self.setup_connections(config)
+		def self.setup_connections(bot, config)
+		  connections = {}
 			config.each do |network, server_setup|
-				@@connections[network] = IRC::Setup.new(network, server_setup)
+				connections[network] = IRC::Setup.new(bot, network, server_setup)
 			end
+			return connections
 		end
 		
-		#Connects to all (or a specific) servers
-		def self.connect(network=nil)
-			if network.nil?
-				@@connections.each do |name, connection|
-					connection.connect
-				end
-			else
-				@@connections[network].connect
-			end
-		end
-		
-		#Adds a handler for an irc event
-		def self.add_handler(eventname, proc, network=nil)
-			if network.nil?
-				@@connections.each do |name, connection|
-					connection.add_startup_handler(lambda {|bot|
-						bot.add_message_handler(eventname, proc)
-					})
-				end
-			else
-				network.add_startup_handler(lambda {|bot|
-					bot.add_message_handler(eventname, proc)
-				})
-			end
-		end
+	  def self.add_handler(eventname, proc, network)
+		  network.add_startup_handler(lambda {|bot|
+			  bot.add_message_handler(eventname, proc)
+		  })
+	  end
 	end
 end
