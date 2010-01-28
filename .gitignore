@@ -8,3 +8,4 @@ botchk
 .loadpath
 .eprj
 *.pid
+config/bots.yml
