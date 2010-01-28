@@ -1,0 +1,10 @@
+bot.log
+downloader.log
+config.rb
+bot.sqlite
+bot.pid
+botchk
+.project
+.loadpath
+.eprj
+*.pid
