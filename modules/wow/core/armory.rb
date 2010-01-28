@@ -44,13 +44,11 @@ class ArmoryModule
     value = args.split
     return "#{value[1]} rating = " + get_points(value[0], value[1])
   end
-  def self.armory_link(args, event)
-    if args =~ /^(us|eu|kr|cn) (.*) (.*)$/i
-      domain = domain_check($1)
-      tinyurl = mktinyurl(URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode($2)}&n=#{URI.encode($3)}").to_s)
-      whtinyurl = mktinyurl(URI.parse("http://profiler.wowhead.com/?profile=#{URI.encode($1)}.#{URI.encode($2)}.#{URI.encode($3)}").to_s)
-      return "#{$3.capitalize}'s Wowhead Profile: #{whtinyurl} - WowArmory Profile: #{tinyurl}"
-    end
+  def self.armory_link(domain, realm, charactername, country)
+    tinyurl = mktinyurl(URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s)
+    whrealm = realm.gsub(/ /,"-").gsub(/\+/, "-").gsub(/'/, "")
+    whtinyurl = mktinyurl(URI.parse("http://profiler.wowhead.com/?profile=#{URI.encode(country.downcase)}.#{URI.encode(whrealm.downcase)}.#{URI.encode(charactername.downcase)}").to_s)
+    return "#{charactername.capitalize}'s Wowhead Profile: #{whtinyurl} - WowArmory Profile: #{tinyurl}"
     return false
   end
   def self.buffinfo(args, event)
@@ -132,8 +130,6 @@ class ArmoryModule
   def self.get_stats(domain, realm, charactername, country)
     begin
       url = URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s
-      tinyurl = mktinyurl(URI.parse("http://#{domain}/character-sheet.xml?r=#{URI.encode(realm)}&n=#{URI.encode(charactername)}").to_s)
-      whtinyurl = mktinyurl(URI.parse("http://profiler.wowhead.com/?profile=#{URI.encode(country)}.#{URI.encode(realm)}.#{URI.encode(charactername)}").to_s)
       xmldoc = RemoteRequest.new("get").read(url)
         return "#{charactername.capitalize}: Error downloading armory profile, armory may be down" unless xmldoc
         armoryinfo = (REXML::Document.new xmldoc).root
@@ -233,8 +229,9 @@ class ArmoryModule
                 output = output + " #{stat}: #{character[statkey]};"
               end
             end
-            if tinyurl
-              output = "#{output} Wowhead Profile: #{whtinyurl} WowArmory: #{tinyurl}"
+            armory_links = armory_link(domain, realm, charactername, country)
+            if armory_links
+              output += " #{armory_links}"
             end
             return output
           else
@@ -265,7 +262,7 @@ end
 
 @@class_show_stats = {
   'death knight' => {
-    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %', 'defenses_armor' => 'Armor', 'defenses_armor_perc' => 'Armor Reduction %', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %'},
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %', 'defenses_armor' => 'Armor', 'defenses_armor_perc' => 'Armor Reduction %', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %'},
   },
   'druid' => {
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
