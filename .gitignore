@@ -9,3 +9,4 @@ botchk
 .eprj
 *.pid
 config/bots.yml
+logs/*
