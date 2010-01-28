@@ -10,3 +10,4 @@ botchk
 *.pid
 config/bots.yml
 logs/*
+setup/make_config.rb
