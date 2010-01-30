@@ -3,9 +3,9 @@ class SystemModule
     event.connection.setup.reset_startup_handlers
     event.connection.setup.default_handlers
     load 'core/handlers.rb'
-    setup_models
-    setup_config
-    setup_modules
+    self.setup_models
+    self.setup_config
+    self.setup_modules
     return "Reloaded!"
   end
 

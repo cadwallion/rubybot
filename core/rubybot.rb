@@ -12,15 +12,15 @@ require 'core/config.rb'
 require 'core/database.rb'
 
 class RubyBot
-	attr_accessor :connections, :config, :commands
-	def initialize
-		@commands = {}
-		@config = {}
-		@connections = {}
-		setup
-	end
+  attr_accessor :connections, :config, :commands
+  def initialize
+    @commands = {}
+    @config = {}
+    @connections = {}
+    setup
+  end
 	
-	def setup
+  def setup
     #setup config, takes yml config and sets it into the @commands and @connections class vars.
     self.setup_config
     
