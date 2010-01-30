@@ -56,7 +56,6 @@ module IRC
 				return if connection.irc_handlers.size == 0 or connection.irc_handlers[event_type].nil?
 				connection.irc_handlers[event_type].each do |handler|
 					handler.call(self) unless handler.nil?
-					logger.debug("ran handler for #{event_type}")
 				end
 			rescue => err
 				log_error(err)
