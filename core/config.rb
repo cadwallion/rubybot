@@ -1,5 +1,5 @@
 class RubyBot
-  def setup_config
+  def self,setup_config
     # load all bots commands, help, and correlation to its Object reference
     Dir['**/modules/*/config/*.yml'].each do |config|
       self.commands.merge! YAML::load(File.open(config))
@@ -13,13 +13,13 @@ class RubyBot
     self.connections = IRC::Utils.setup_connections(self, self.config)
   end
 
-  def setup_models
+  def self.setup_models
     Dir['**/modules/*/models/*.rb'].each do |model|
       load model
     end
   end
 
-  def setup_modules
+  def self.setup_modules
     Dir['**/modules/*/core/*.rb'].each do |mod|
       load mod
     end
