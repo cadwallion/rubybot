@@ -6,7 +6,7 @@ class RubyBot
       `sqlite3 db/bot.sqlite < sql/channels.sql`
     end
   end
-  
+
   def setup_config
     # load all bots commands, help, and correlation to its Object reference
     Dir['**/modules/*/config/*.yml'].each do |config|
@@ -17,7 +17,7 @@ class RubyBot
     Dir['config/*.yml'].each do |config|
       self.config.merge! YAML::load(File.open(config))
     end
-    
+
     self.connections = IRC::Utils.setup_connections(self, self.config)
   end
 
@@ -26,19 +26,21 @@ class RubyBot
       load model
     end
   end
-  
+
   def setup_initial_data
+    unless User.find(:admin => 1)
+      self.config['admins'].each do |admin|
+        user = User.create(:nickname => admin["nickname"].to_s, :admin => 1)
+        user.add_host(Host.create(:hostmask => admin["hostmask"]))
+        user.password = admin["password"]
+        puts user.inspect
+        user.save
+      end
+    end
     if Channel.count == 0
-      self.config.each do |network|
-        if network == "admins"
-          user = User.create(:nickname => e["nickname"].to_s, :admin => 1)
-          user.add_host(Host.create(:hostmask => e["hostmask"]))
-          user.password = e["password"]
-          user.save
-        else
-          network[1]["channels"].each do |e|
-            Channel.create(:name => e)
-          end
+      self.config['networks'].each do |name, network|
+        network['channels'].each do |channel|
+          Channel.create(:name => channel)
         end
       end
     end
@@ -55,3 +57,4 @@ class RubyBot
     end
   end
 end
+
