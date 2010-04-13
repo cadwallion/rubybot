@@ -12,19 +12,24 @@
 
 $ sudo gem install activerecord Ruby-MemCache
 
-2) Copy the config example to a config file:
+3) Initialize and update the ruby irc library submodule
+
+$ git submodule init
+$ git submodule update
+
+4) Copy the config example to a config file:
 
 $ cp config.rb.example config.rb
 
-3) Edit config.rb with your favorite editor, there are comments in the file.
+5) Edit config.rb with your favorite editor, there are comments in the file.
 
-4) Make the sqlite DB:
+6) Make the sqlite DB:
 
 $ ./makedb.sh
 
-5) Edit the botchk file to reflect your ruby path and rubybot directory.
+7) Edit the botchk file to reflect your ruby path and rubybot directory.
 
-6) Run the botchk file to load the bot.
+8) Run the botchk file to load the bot.
 
 $ ./botchk
 
