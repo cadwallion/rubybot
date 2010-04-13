@@ -12,3 +12,4 @@ config/bots.yml
 logs/*
 !logs/.gitignore
 setup/make_config.rb
+*~
