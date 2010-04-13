@@ -14,6 +14,12 @@ freenode:
   weather_api: ''
   pownce_api_key: ''
   pownce_api_secret: ''
+	channels:
+	-	'#coding'
+admins:
+	-	nickname: 'Bob'
+		hostmask: '*admin@host.com'
+		password: 'pass123'
 #shadowfire:
 #  server_address: 'irc.shadowfire.org'
 #  server_port: 6667

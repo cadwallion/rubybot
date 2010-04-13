@@ -23,10 +23,11 @@ class RubyBot
   def setup
     #setup config, takes yml config and sets it into the @commands and @connections class vars.
     setup_config
+    setup_db
     
     #load all of the models from the modules
     setup_models
-
+    setup_initial_data
     #sets up memcache connection
     setup_memcache
 

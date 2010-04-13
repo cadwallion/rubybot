@@ -1,4 +1,12 @@
 class RubyBot
+  def setup_db
+    unless File.exist? "db/bot.sqlite"
+      `sqlite3 db/bot.sqlite < sql/users.sql`
+      `sqlite3 db/bot.sqlite < sql/hosts.sql`
+      `sqlite3 db/bot.sqlite < sql/channels.sql`
+    end
+  end
+  
   def setup_config
     # load all bots commands, help, and correlation to its Object reference
     Dir['**/modules/*/config/*.yml'].each do |config|
@@ -16,6 +24,23 @@ class RubyBot
   def setup_models
     Dir['**/modules/*/models/*.rb'].each do |model|
       load model
+    end
+  end
+  
+  def setup_initial_data
+    if Channel.count == 0
+      self.config.each do |network|
+        if network == "admins"
+          user = User.create(:nickname => e["nickname"].to_s, :admin => 1)
+          user.add_host(Host.create(:hostmask => e["hostmask"]))
+          user.password = e["password"]
+          user.save
+        else
+          network[1]["channels"].each do |e|
+            Channel.create(:name => e)
+          end
+        end
+      end
     end
   end
 
