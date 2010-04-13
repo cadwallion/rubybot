@@ -1,0 +1,3 @@
+[submodule "core/lib/EM-Ruby-IRC"]
+	path = core/lib/EM-Ruby-IRC
+	url = git://github.com/tecnobrat/em-ruby-irc.git
