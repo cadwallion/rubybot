@@ -33,7 +33,6 @@ class RubyBot
         user = User.create(:nickname => admin["nickname"].to_s, :admin => 1)
         user.add_host(Host.create(:hostmask => admin["hostmask"]))
         user.password = admin["password"]
-        puts user.inspect
         user.save
       end
     end
