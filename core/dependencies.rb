@@ -16,6 +16,8 @@ require 'hpricot'
 require 'net/http'
 require 'uri'
 require 'time'
+require 'em-ruby-irc'
+
 
 #require windows specific gems
 if defined?(CONFIG) and CONFIG['host_os'] == "mswin32"

@@ -4,7 +4,6 @@
 require 'core/dependencies.rb'
 
 require 'core/logging.rb'
-require 'core/lib/EM-Ruby-IRC/IRC.rb'
 require 'core/includes.rb'
 require 'core/remote_request.rb'
 require 'core/memcache.rb'
