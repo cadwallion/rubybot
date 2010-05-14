@@ -1,0 +1,30 @@
+= REQUIREMENTS
+
+- Rubygems
+- activerecord gem
+- Ruby-MemCache gem
+
+= INSTALLATION
+
+1) Install rubygems (http://www.rubygems.org)
+
+2) Install gems:
+
+$ sudo gem install sequel Ruby-MemCache em-ruby-irc hpricot
+
+3) Copy the config example to a config file:
+
+$ cp config.rb.example config.rb
+
+4) Edit config.rb with your favorite editor, there are comments in the file.
+
+5) Edit the botchk file to reflect your ruby path and rubybot directory.
+
+6) Run the botchk file to load the bot.
+
+$ ./botchk
+
+== CONTACT INFORMATION ==
+
+Website: http://www.tecnobrat.com/ruby-irc-bot
+Email: brian -= at =- tecnobrat [[dot]] com
