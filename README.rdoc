@@ -24,7 +24,13 @@ $ cp config.rb.example config.rb
 
 $ ./botchk
 
-== CONTACT INFORMATION ==
+== VERSION INFORMATION
+
+It is important to keep your em-ruby-irc gem sync'd at the same minor version level.  Patch level versions will be compatible.
+
+For example rubybot-0.0.1 is guaranteed compatible with em-ruby-irc-0.0.* however, rubybot-0.1.0 will not be compatible with the 0.0.* versions, upgrade to em-ruby-irc-0.1.* for that version of rubybot.
+
+= CONTACT INFORMATION
 
 Website: http://www.tecnobrat.com/ruby-irc-bot
 Email: brian -= at =- tecnobrat [[dot]] com
