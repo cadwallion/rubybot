@@ -26,7 +26,7 @@ class SystemModule
   end
 
   def self.time(args, event)
-    return "It is #{Time.now.to_i}.  #{1234567890 - Time.now.to_i} seconds left."
+    return "UNIX time is now #{Time.now.to_i}.  #{2147483647 - Time.now.to_i + 1} seconds left until the epochalypse."
   end
 
   def self.do_roll(args, event)
