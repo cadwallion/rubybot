@@ -18,25 +18,28 @@ class WowModule
   end
 
   def self.notices(args, event)
-    return getnotices
-  end
-
-  def self.getnotices
-    output = ""
-    number = 0
-    url = URI.parse('http://launcher.worldofwarcraft.com/alert').to_s  
-    doc = RemoteRequest.new("get").read(url)
-    doc.split("\n").each do |line|
-      unless line == "SERVERALERT:" or line == ""
-        if line =~ /^\[.*\]$/
-          number = number + 1
-          line = line + " - "
-        end
-        return output if number > 1
-        output = output + line
+    if args =~ /^(us|eu|US|EU)$/
+      if $1 == "us" or $1 == "US"
+	return getnotices("http://launcher.worldofwarcraft.com/alert")
+      else
+	return getnotices("http://status.wow-europe.com/en/alert")
       end
     end
-    return output
+    return false
+  end
+
+  def self.getnotices(url)
+    output = ""
+    url = URI.parse(url).to_s  
+    doc = RemoteRequest.new("get").read(url)
+    doc = doc.gsub(/\<br \/\>\<br \/\>/, "\n")
+    doc = doc.gsub(/\<br \/\>/, "\n")
+    doc = html2text(doc)
+    doc.split("\n").each do |line|
+      line = line.gsub(/SERVERALERT\:/, "")
+      output = output + line
+    end
+    return output.strip
   end
 
   def self.getrealmstatus_us
@@ -115,7 +118,7 @@ class WowModule
       up = 0
       down = 0
       armoryinfo.elements.each('/rss/channel/item') do |item|
-        i=i+1
+        i=i+1 unless item.elements['category'].nil?
         status = item.elements['description'].text
         if status =~ /^(.*) - Realm Up - (.*)$/
           up=up+1
@@ -128,4 +131,3 @@ class WowModule
     return false
   end
 end
-

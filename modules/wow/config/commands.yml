@@ -29,5 +29,6 @@ greed:
   command: "ArmoryModule.greed"
   num_args: 3
 notices:  
-  help: "Wow Breaking News Displayer The format for @notices is '@notices'."
+  help: "Wow Breaking News Displayer The format for @notices is '@notices <us/eu>'."
+  regex: '^(us|eu)'
   command: "WowModule.notices"
