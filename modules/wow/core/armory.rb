@@ -176,6 +176,7 @@ class ArmoryModule
             'melee_hitrating' => armoryinfo.elements['/page/characterInfo/characterTab/melee/hitRating'].attributes["increasedHitPercent"],
             'melee_crit' => armoryinfo.elements['/page/characterInfo/characterTab/melee/critChance'].attributes["percent"],
             'melee_haste' => armoryinfo.elements['/page/characterInfo/characterTab/melee/mainHandSpeed'].attributes["hastePercent"],
+            'melee_armor_penetration' => armoryinfo.elements['/page/characterInfo/characterTab/melee/hitRating'].attributes["reducedArmorPercent"],
             #range stats
             'range_skill' => armoryinfo.elements['/page/characterInfo/characterTab/ranged/weaponSkill'].attributes["value"],
             'range_damage' => armoryinfo.elements['/page/characterInfo/characterTab/ranged/damage'].attributes["min"]+"-"+armoryinfo.elements['/page/characterInfo/characterTab/ranged/damage'].attributes["max"],
@@ -265,7 +266,7 @@ end
 
 @@class_show_stats = {
   'death knight' => {
-    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %'},
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %', 'melee_armor_penetration' => 'Arm Pen %'},
     'frost' => {'defenses_armor' => 'Armor', 'defenses_armor_perc' => 'Armor Red %', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %'}
   },
   'druid' => {
@@ -287,7 +288,7 @@ end
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil'},
     'holy' => {'intellect' => 'Intellect', 'spell_holy_damage' => 'Holy Damage', 'spell_bonus_healing' => 'Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Haste %'},  
     'protection' => {'spell_holy_damage' => 'Holy Damage', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'melee_haste' => 'Melee Haste %', 'defenses_armor_perc' => 'Armor Red %'},
-    'retribution' => {'spell_holy_damage' => 'Holy Damage', 'melee_expertise' => 'Expertise %', 'melee_mainhand_damage' => 'Weap Dmg', 'melee_mainhand_damage_dps' => 'Weap DPS', 'melee_mainhand_speed' => 'Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_haste' => 'Haste %'},
+    'retribution' => {'spell_holy_damage' => 'Holy Damage', 'melee_expertise' => 'Expertise %', 'melee_mainhand_damage' => 'Weap Dmg', 'melee_mainhand_damage_dps' => 'Weap DPS', 'melee_mainhand_speed' => 'Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_haste' => 'Haste %', 'melee_armor_penetration' => 'Arm Pen %'},
   },
   'priest' => {
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil', 'spell_haste' => 'Haste %'},
@@ -296,12 +297,12 @@ end
     'shadow' => {'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration'},
   },
   'rogue' => {
-    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Damage', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %'},
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Damage', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %', 'melee_armor_penetration' => 'Arm Pen %'},
   },
   'shaman' => {
     'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil'},
     'elemental' => {'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration', 'spell_haste' => 'Haste %'},
-    'enhancement' => {'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_haste' => 'Haste %'},
+    'enhancement' => {'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_haste' => 'Haste %', 'melee_armor_penetration' => 'Arm Pen %'},
     'restoration' => {'spell_bonus_healing' => 'Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Haste %'},
   },
   'warlock' => {
@@ -310,7 +311,7 @@ end
   'warrior' => {
     'base' => {'health' => 'Health', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %'},
     'protection' => {'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'defenses_armor_perc' => 'Armor Red %'},
-    'fury' => {'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit'},
-    'arms' => {'melee_mainhand_damage' => 'Weap Dmg', 'melee_mainhand_damage_dps' => 'Weap DPS', 'melee_mainhand_speed' => 'Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit'},
+    'fury' => {'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_armor_penetration' => 'Arm Pen %'},
+    'arms' => {'melee_mainhand_damage' => 'Weap Dmg', 'melee_mainhand_damage_dps' => 'Weap DPS', 'melee_mainhand_speed' => 'Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_armor_penetration' => 'Arm Pen %'},
   },
 }
