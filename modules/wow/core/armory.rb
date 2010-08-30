@@ -90,16 +90,19 @@ class ArmoryModule
         armoryinfo = (REXML::Document.new xmldoc).root
         if armoryinfo and armoryinfo.elements['/category/category'] and armoryinfo.elements["/category/category[@name='Gear']"]
           greed = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Greed rolls made on loot']"].attributes['quantity'].to_i
+          de = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Disenchant rolls made on loot']"].attributes['quantity'].to_i
           need = armoryinfo.elements["/category/category[@name='Gear']/statistic[@name='Need rolls made on loot']"].attributes['quantity'].to_i
           return "#{charactername.capitalize} has never rolled need on an item." if need < 1
-          ratio = ((need.to_f / (greed + need)) * 100).to_i
+          ratio = ((need.to_f / (greed + need + de)) * 100).to_i
           output = case ratio
-            when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
-            when 5 .. 15: "You are not a greedy person. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
-            when 15 .. 30: "You should watch it, you're getting needy. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
-            when 30 .. 50: "Wow I'm glad you aren't my girlfriend/boyfriend. (#{ratio}% needs - #{need} needs, #{greed} greeds)"
-            when 50 .. 75: "Do you understand the meaning of 'need'? (#{ratio}% needs - #{need} needs, #{greed} greeds)"
-            when 75 .. 100: "Wow you need to leave loot for everyone else! (#{ratio}% needs - #{need} needs, #{greed} greeds)"
+            when 0 .. 5: "You are a nice person, maybe too nice. (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 6 .. 9: "You are just an average joe ... way to be original. (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 10 .. 12: "You're getting a little needy there .. better watch out. (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 13 .. 15: "Didn't your mother ever teach you to share? (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 16 .. 19: "Wow I'm glad you aren't *MY* girlfriend/boyfriend. (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 20 .. 24: "Do you understand the meaning of 'need'? (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 25 .. 49: "If I didn't know any better, I would think you are a jerk.  Wait I don't know better ... (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
+            when 50 .. 100: "Wow .. you really are a jerk! (#{ratio}% needs - #{need} needs, #{greed} greeds, #{de} disenchants)"
             else "Unknown greed level"
           end
           return "#{charactername.capitalize}: #{output}"
@@ -262,51 +265,52 @@ end
 
 @@class_show_stats = {
   'death knight' => {
-    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %', 'defenses_armor' => 'Armor', 'defenses_armor_perc' => 'Armor Reduction %', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %'},
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %'},
+    'frost' => {'defenses_armor' => 'Armor', 'defenses_armor_perc' => 'Armor Red %', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %'}
   },
   'druid' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
-    'balance' => {'spell_arcane_damage' => 'Arcane Damage', 'spell_arcane_crit' => 'Arcane Crit %', 'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'spell_haste' => 'Spell Haste %'},
-    'feral' => {'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'melee_haste' => 'Melee Haste %', 'defenses_armor_perc' => 'Armor Reduction %'},
-    'restoration' => {'spell_bonus_healing' => 'Plus Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Spell Haste %'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil'},
+    'balance' => {'spell_arcane_damage' => 'Arcane Damage', 'spell_arcane_crit' => 'Arcane Crit %', 'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration', 'spell_haste' => 'Haste %'},
+    'feral' => {'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'melee_haste' => 'Haste %', 'defenses_armor_perc' => 'Armor Red %'},
+    'restoration' => {'spell_bonus_healing' => 'Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Haste %'},
   },
   'hunter' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'range_power' => 'Ranged Attack Power', 'range_damage' => 'Ranged Damage', 'range_speed' => 'Ranged Attack Speed', 'range_damage_dps' => 'Ranged DPS', 'range_hitrating' => 'Ranged Hit %', 'range_crit' => 'Ranged Crit %', 'defenses_resilience' => 'Resilience', 'spell_manaregen' => 'MP5', 'range_haste' => 'Ranged Haste %'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'range_power' => 'Ranged Attack Power', 'range_damage' => 'Ranged Damage', 'range_speed' => 'Ranged Attack Speed', 'range_damage_dps' => 'Ranged DPS', 'range_hitrating' => 'Ranged Hit %', 'range_crit' => 'Ranged Crit %', 'defenses_resilience' => 'Resil', 'spell_manaregen' => 'MP5', 'range_haste' => 'Ranged Haste %'},
   },
   'mage' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'defenses_resilience' => 'Resilience', 'spell_haste' => 'Spell Haste %'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration', 'defenses_resilience' => 'Resil', 'spell_haste' => 'Haste %'},
     'arcane' => {'spell_arcane_damage' => 'Arcane Damage', 'spell_arcane_crit' => 'Arcane Crit %'},
     'fire' => {'spell_fire_damage' => 'Fire Damage', 'spell_fire_crit' => 'Fire Crit %'},
     'frost' => {'spell_frost_damage' => 'Frost Damage', 'spell_frost_crit' => 'Frost Crit %'},
   },
   'paladin' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
-    'holy' => {'intellect' => 'Intellect', 'spell_holy_damage' => 'Holy Damage', 'spell_bonus_healing' => 'Plus Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Spell Haste %'},  
-    'protection' => {'spell_holy_damage' => 'Holy Damage', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'melee_haste' => 'Melee Haste %', 'defenses_armor_perc' => 'Armor Reduction %'},
-    'retribution' => {'spell_holy_damage' => 'Holy Damage', 'melee_expertise' => 'Expertise %', 'melee_mainhand_damage' => 'Weapon Damage', 'melee_mainhand_damage_dps' => 'Weapon DPS', 'melee_mainhand_speed' => 'Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_haste' => 'Melee Haste %'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil'},
+    'holy' => {'intellect' => 'Intellect', 'spell_holy_damage' => 'Holy Damage', 'spell_bonus_healing' => 'Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Haste %'},  
+    'protection' => {'spell_holy_damage' => 'Holy Damage', 'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'melee_haste' => 'Melee Haste %', 'defenses_armor_perc' => 'Armor Red %'},
+    'retribution' => {'spell_holy_damage' => 'Holy Damage', 'melee_expertise' => 'Expertise %', 'melee_mainhand_damage' => 'Weap Dmg', 'melee_mainhand_damage_dps' => 'Weap DPS', 'melee_mainhand_speed' => 'Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_haste' => 'Haste %'},
   },
   'priest' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience', 'spell_haste' => 'Spell Haste %'},
-    'discipline' => {'spell_bonus_healing' => 'Plus Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5'},
-    'holy' => {'spell_bonus_healing' => 'Plus Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5'},
-    'shadow' => {'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil', 'spell_haste' => 'Haste %'},
+    'discipline' => {'spell_bonus_healing' => 'Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5'},
+    'holy' => {'spell_bonus_healing' => 'Healing', 'spell_holy_crit' => 'Holy Crit %', 'spell_manaregen' => 'MP5'},
+    'shadow' => {'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration'},
   },
   'rogue' => {
-    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %'},
+    'base' => {'health' => 'Health', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Damage', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %'},
   },
   'shaman' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resilience'},
-    'elemental' => {'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'spell_haste' => 'Spell Haste %'},
-    'enhancement' => {'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit', 'melee_haste' => 'Melee Haste %'},
-    'restoration' => {'spell_bonus_healing' => 'Plus Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Spell Haste %'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'defenses_resilience' => 'Resil'},
+    'elemental' => {'spell_nature_damage' => 'Nature Damage', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration', 'spell_haste' => 'Haste %'},
+    'enhancement' => {'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'MH Weap DPS', 'melee_mainhand_speed' => 'MH Weap Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit', 'melee_haste' => 'Haste %'},
+    'restoration' => {'spell_bonus_healing' => 'Healing', 'spell_nature_crit' => 'Nature Crit %', 'spell_manaregen' => 'MP5', 'spell_haste' => 'Haste %'},
   },
   'warlock' => {
-    'base' => {'health' => 'Health', 'mana' => 'Mana', 'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Spell Hit %', 'spell_penetration' => 'Spell Penetration', 'defenses_resilience' => 'Resilience', 'spell_fire_damage' => 'Fire Damage', 'spell_fire_crit' => 'Fire Crit %', 'spell_haste' => 'Spell Haste %'},
+    'base' => {'health' => 'Health', 'mana' => 'Mana', 'spell_shadow_damage' => 'Shadow Damage', 'spell_shadow_crit' => 'Shadow Crit %', 'spell_manaregen' => 'MP5', 'spell_hitrating' => 'Hit %', 'spell_penetration' => 'Spell Penetration', 'defenses_resilience' => 'Resil', 'spell_fire_damage' => 'Fire Damage', 'spell_fire_crit' => 'Fire Crit %', 'spell_haste' => 'Haste %'},
   },
   'warrior' => {
-    'base' => {'health' => 'Health', 'defenses_resilience' => 'Resilience', 'melee_haste' => 'Melee Haste %'},
-    'protection' => {'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'defenses_armor_perc' => 'Armor Reduction %'},
-    'fury' => {'melee_mainhand_damage' => 'Mainhand Weapon Damage', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'Offhand Weapon Damage', 'melee_offhand_damage_dps' => 'Offhand Weapon DPS', 'melee_offhand_speed' => 'Offhand Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit'},
-    'arms' => {'melee_mainhand_damage' => 'Weapon Damage', 'melee_mainhand_damage_dps' => 'Weapon DPS', 'melee_mainhand_speed' => 'Weapon Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Melee Hit %', 'melee_crit' => 'Melee Crit'},
+    'base' => {'health' => 'Health', 'defenses_resilience' => 'Resil', 'melee_haste' => 'Haste %'},
+    'protection' => {'defenses_armor' => 'Armor', 'defenses_defense' => 'Defense', 'defenses_dodge' => 'Dodge %', 'defenses_parry' => 'Parry %', 'defenses_block' => 'Block %', 'defenses_armor_perc' => 'Armor Red %'},
+    'fury' => {'melee_mainhand_damage' => 'MH Weap Dmg', 'melee_mainhand_damage_dps' => 'Mainhand Weapon DPS', 'melee_mainhand_speed' => 'Mainhand Weapon Speed', 'melee_offhand_damage' => 'OH Weap Dmg', 'melee_offhand_damage_dps' => 'OH Weap DPS', 'melee_offhand_speed' => 'OH Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit'},
+    'arms' => {'melee_mainhand_damage' => 'Weap Dmg', 'melee_mainhand_damage_dps' => 'Weap DPS', 'melee_mainhand_speed' => 'Weap Speed', 'melee_power' => 'Attack Power', 'melee_hitrating' => 'Hit %', 'melee_crit' => 'Crit'},
   },
 }
