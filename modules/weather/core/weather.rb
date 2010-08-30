@@ -15,7 +15,7 @@ class WeatherModule
 				xmldoc = RemoteRequest.new("get").read(url)
 				weather = (REXML::Document.new xmldoc).root
 				if weather.elements['/weather/cc'] then
-					current = "Location: #{weather.elements['/weather/loc/dnam'].text} - Updated at: #{weather.elements['/weather/cc/lsup'].text} - Temp: #{weather.elements['/weather/cc/tmp'].text}F (#{convert_to_c(weather.elements['/weather/cc/tmp'].text)}C) - Feels like: #{weather.elements['/weather/cc/flik'].text}F (#{convert_to_c(weather.elements['/weather/cc/flik'].text)}C) - Wind: #{weather.elements['/weather/cc/wind/t'].text} #{weather.elements['/weather/cc/wind/s'].text} MPH - Conditions: #{weather.elements['/weather/cc/t'].text}"
+					current = "Location: #{weather.elements['/weather/loc/dnam'].text} - Updated at: #{weather.elements['/weather/cc/lsup'].text} - Temp: #{weather.elements['/weather/cc/tmp'].text}F (#{convert_to_c(weather.elements['/weather/cc/tmp'].text)}C) - Feels like: #{weather.elements['/weather/cc/flik'].text}F (#{convert_to_c(weather.elements['/weather/cc/flik'].text)}C) - Wind: #{weather.elements['/weather/cc/wind/t'].text} #{weather.elements['/weather/cc/wind/s'].text} MPH - Conditions: #{weather.elements['/weather/cc/t'].text} - Humidity: #{weather.elements['/weather/cc/hmid'].text}%"
 					event.connection.setup.memcache.set("current_"+citycode, current, 30*60)
 					current
 				else
@@ -118,7 +118,9 @@ class WeatherModule
 		users = UserModule.get_users(event)
 		users.each do |user|
 			unless args.size == 0 and (user.nil? or user.location.nil?)
-				if args.size > 1
+				if args[0] == "force" and not user.location.nil?
+					return get_current(user.location, event, true)
+				elsif args.size > 1
 					return get_current(args[0], event, true)
 				elsif args.size == 1
 					return get_current(args[0], event)
